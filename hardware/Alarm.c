@@ -6,6 +6,8 @@
 #include "Delay.h"
 #include <time.h>
 #include "Power.h"
+#include "FreeRTOS.h"
+#include "task.h"
 
 
 uint8_t Alarm_Enable = 0;
@@ -194,7 +196,7 @@ void Alarm_RingPage(void)
         OLED_ShowString(16, 40, "KEY3 STOP", OLED_8X16);
         OLED_Update();
 
-        Delay_ms(100);
+        vTaskDelay(pdMS_TO_TICKS(100));
     }
 }
 

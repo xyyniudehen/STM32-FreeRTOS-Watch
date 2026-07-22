@@ -8,6 +8,8 @@
 #include "MPU6050.h"
 #include "MPU6050_Reg.h"
 #include "LED.h"
+#include "FreeRTOS.h"
+#include "task.h"
 
 static volatile uint32_t Power_RunMs = 0U;
 static uint32_t Power_LastActivityMs = 0U;
@@ -65,7 +67,7 @@ void Power_PrepareSleep(void)
     OLED_Clear();
     OLED_ShowString(24, 24, "sleep...", OLED_8X16);
     OLED_Update();
-    Delay_ms(500);
+    vTaskDelay(pdMS_TO_TICKS(500));
     LED0_OFF();
     /* πÿ±’OLEDœ‘ æ */
     OLED_WriteCommand(0xAE);
@@ -101,7 +103,7 @@ void Power_AfterWakeup(void)
 
     /* 4. ªΩ–—MPU6050 */
     MPU6050_WriteReg(MPU6050_PWR_MGMT_1, 0x00);
-    Delay_ms(100);
+    vTaskDelay(pdMS_TO_TICKS(100));
 }
 
 void Power_ClearWakeupKey(void)
@@ -110,10 +112,10 @@ void Power_ClearWakeupKey(void)
            (GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_13) == 0) ||
            (GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_15) == 0))
     {
-        Delay_ms(10);
+        vTaskDelay(pdMS_TO_TICKS(10));
     }
 
-    Delay_ms(20);
+    vTaskDelay(pdMS_TO_TICKS(20));
 
     kEY_GetNum();
 }
@@ -183,7 +185,7 @@ void Power_EnterStopMode(void)
         OLED_Clear();
         OLED_ShowString(24, 24, "Wake Up", OLED_8X16);
         OLED_Update();
-        Delay_ms(300);
+        vTaskDelay(pdMS_TO_TICKS(300));
 
         OLED_Clear();
         OLED_Update();

@@ -4,6 +4,8 @@
 #include "LED.h"
 #include "KEY.h"
 #include "Serial.h"
+#include "OLED.h"
+#include "menu.h"
 
 volatile uint32_t led_count = 0;
 volatile BaseType_t create_ret = 0;
@@ -12,19 +14,44 @@ volatile uint32_t after_scheduler = 0;
 
 volatile uint8_t key_value = 0;
 
+static void UITask(void *param)
+{
+    int clkflag1;
+
+    // OLED_Init();
+    // OLED_Clear();
+    // OLED_Update();
+
+    // Peripheral_Init();
+
+    while (1)
+    {
+        clkflag1 = First_Page_Clock();
+
+        if (clkflag1 == 1)
+        {
+            Meun1();
+        }
+        else if (clkflag1 == 2)
+        {
+            SettingPage();
+        }
+
+        vTaskDelay(1);
+    }
+}
 
 static void KeyTask(void *param)
 {
     uint8_t state;
     uint8_t last_state = 0;
-    uint8_t num;
 
     while (1)
     {
         Key3_Tick();
         Key_Tick();
 
-        state = kEY_GetNum();
+        state = Key_GetState();
 
         if (state != last_state)
         {
@@ -35,20 +62,10 @@ static void KeyTask(void *param)
             last_state = state;
         }
 
-        num = kEY_GetNum();
-
-        if (num != 0)
-        {
-            key_value = num;
-
-            Serial_Send_String("key=");
-            Serial_SendByte(num + '0');
-            Serial_Send_String("\r\n");
-        }
-
         vTaskDelay(1);
     }
 }
+
 
 static void LEDTask(void *param)
 {
@@ -72,12 +89,17 @@ int main(void)
     KEY_Init();
     Serial_Init();
 
+    OLED_Init();
+    OLED_Clear();
+    OLED_Update();
+
+    Peripheral_Init();
+
     xTaskCreate(LEDTask, "LED", 128, NULL, 1, NULL);
     xTaskCreate(KeyTask, "KEY", 128, NULL, 2, NULL);
-
+    xTaskCreate(UITask, "UI", 512, NULL, 1, NULL);
 
     vTaskStartScheduler();
-
 
     while (1)
     {

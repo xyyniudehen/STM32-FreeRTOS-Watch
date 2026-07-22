@@ -5,6 +5,8 @@
 #include "KEY.h"
 #include "math.h"
 #include "Delay.h"
+#include "FreeRTOS.h"
+#include "task.h"
 
 struct Object_Position{
     uint8_t minX, minY, maxX, maxY;
@@ -125,7 +127,7 @@ int isColliding(struct Object_Position *a,struct Object_Position *b)
         OLED_Clear();
         OLED_ShowString(28, 24, "Game Over", OLED_8X16);
         OLED_Update();
-        Delay_s(1);
+        vTaskDelay(pdMS_TO_TICKS(1000));
         OLED_Clear();
         OLED_Update();
         return 1;
