@@ -1,0 +1,28 @@
+{
+    "configurations": [
+        {
+            "name": "STM32-FreeRTOS",
+            "includePath": [
+                "${workspaceFolder}",
+                "${workspaceFolder}/start",
+                "${workspaceFolder}/user",
+                "${workspaceFolder}/Library",
+                "${workspaceFolder}/System",
+                "${workspaceFolder}/hardware",
+                "${workspaceFolder}/FREERTOS/FreeRTOS-Kernel/include",
+                "${workspaceFolder}/FREERTOS/FreeRTOS-Kernel/portable/RVDS/ARM_CM3",
+                "${workspaceFolder}/.cmsis/include",
+                "${workspaceFolder}/.pack/Keil/STM32F1xx_DFP.2.3.0/Device/Include"
+            ],
+            "defines": [
+                "USE_STDPERIPH_DRIVER",
+                "STM32F10X_MD",
+                "__CC_ARM"
+            ],
+            "intelliSenseMode": "windows-msvc-arm",
+            "cStandard": "c99",
+            "cppStandard": "c++14"
+        }
+    ],
+    "version": 4
+}
