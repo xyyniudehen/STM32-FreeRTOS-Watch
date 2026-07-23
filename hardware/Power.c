@@ -79,8 +79,6 @@ void Power_PrepareSleep(void)
     OLED_ShowString(24, 24, "sleep...", OLED_8X16);
     OLED_Update();
 
-    // vTaskDelay(pdMS_TO_TICKS(500));
-    // Delay_ms(500);
     Power_BusyDelayMs(500);
 
     LED0_OFF();
@@ -157,11 +155,6 @@ void  Power_EnterStopMode(void)
     EXTI_ClearITPendingBit(EXTI_Line12);
     EXTI_ClearITPendingBit(EXTI_Line13);
 
-    OLED_Clear();
-    OLED_ShowString(0, 0, "Before STOP", OLED_8X16);
-    OLED_Update();
-    // Delay_ms(500);
-    Power_BusyDelayMs(500);
 
     Power_PrepareSleep();
     
@@ -176,17 +169,12 @@ void  Power_EnterStopMode(void)
     PWR_EnterSTOPMode(PWR_Regulator_LowPower, PWR_STOPEntry_WFI);
 
     SystemInit();
-    
+
     Power_AfterWakeup();
 
     SysTick_Config(SystemCoreClock / configTICK_RATE_HZ);
 
-    OLED_Clear();
-    OLED_ShowString(24, 24, "Wake Up", OLED_8X16);
-    OLED_Update();
-    // vTaskDelay(pdMS_TO_TICKS(500));
 
-    // vTaskDelay(pdMS_TO_TICKS(500));
      GPIO_SetBits(GPIOB, GPIO_Pin_12);    
 
 

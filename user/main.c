@@ -11,10 +11,9 @@
 
 volatile uint32_t led_count = 0;
 volatile BaseType_t create_ret = 0;
-volatile uint32_t before_scheduler = 0;
-volatile uint32_t after_scheduler = 0;
 
-volatile uint8_t key_value = 0;
+volatile uint8_t malloc_failed_flag = 0;
+
 
 /*
  * FreeRTOS任务划分：
@@ -115,7 +114,25 @@ static void HeartbeatTask(void *param)
     }
 }
 
+void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName)
+{
+    (void)xTask;
+    Serial_Send_String("Stack overflow: ");
+    Serial_Send_String(pcTaskName);
+    Serial_Send_String("\r\n");
 
+    while (1)
+    {
+        LED0_ON();
+    }
+}
+
+void vApplicationMallocFailedHook(void)
+{
+    malloc_failed_flag = 1;
+
+    Serial_Send_String("Malloc failed\r\n");
+}
 
 int main(void)
 {
@@ -129,15 +146,63 @@ int main(void)
 
     Peripheral_Init();
 
-    xTaskCreate(HeartbeatTask, "LED", 128, NULL, 1, NULL);
-    xTaskCreate(KeyTask, "KEY", 128, NULL, 2, NULL);
-    xTaskCreate(TickTask, "TICK", 128, NULL, 3, NULL);
-    xTaskCreate(UITask, "UI", 1024, NULL, 1, NULL);
+    create_ret = xTaskCreate(HeartbeatTask, "LED", 128, NULL, 1, NULL);
+    if (create_ret != pdPASS)
+    {
+        Serial_Send_String("Create LED task failed\r\n");
 
+        while (1)
+        {
+            LED0_ON();
+        }
+    }
 
-    vTaskStartScheduler();
+    create_ret = xTaskCreate(KeyTask, "KEY", 128, NULL, 2, NULL);
+    if (create_ret != pdPASS)
+    {
+    Serial_Send_String("Create KEY task failed\r\n");
 
     while (1)
     {
+        LED0_ON();
     }
+    }
+
+    create_ret = xTaskCreate(TickTask, "TICK", 128, NULL, 3, NULL);
+    if (create_ret != pdPASS)
+    {
+        Serial_Send_String("Create TICK task failed\r\n");
+
+        while (1)
+        {
+            LED0_ON();
+        }
+    }
+
+
+    create_ret = xTaskCreate(UITask, "UI", 1024, NULL, 1, NULL);
+    if (create_ret != pdPASS)
+    {
+        Serial_Send_String("Create UI task failed\r\n");
+
+        while (1)
+        {
+            LED0_ON();
+        }
+    }
+
+    vTaskStartScheduler();
+    /*
+    * 正常情况下不会执行到这里。
+    * 如果执行到这里，通常表示FreeRTOS创建内部任务失败，
+    * 或调度器没有成功启动。
+    */
+    Serial_Send_String("Scheduler start failed\r\n");
+
+    while (1)
+    {
+        LED0_ON();
+    }
+
+
 }

@@ -94,7 +94,6 @@ int First_Page_Clock(void)
     
         Power_UIActivityTask(KeyNum);
 
-        Power_Task();
 
     if (KeyNum==1) //上一项
     {
@@ -292,7 +291,6 @@ int Meun1(void)
 
         Power_UIActivityTask(KeyNum);
 
-        Power_Task();
 
         uint8_t meun_flag_temp = 0;
 
@@ -534,7 +532,6 @@ int StopWatch(void)
         OLED_Update();
         break;
     }
-    Power_Task();
     vTaskDelay(5);
     }
 }
@@ -769,7 +766,6 @@ int Game(void)
         Power_UIActivityTask(KeyNum);
 
         /* 游戏选择菜单属于普通页面，允许自动休眠 */
-        Power_Task();
 
         uint8_t Game_flag_temp = 0;
 
@@ -791,7 +787,15 @@ int Game(void)
     }
 
     if (Game_flag_temp==1){return 0;}
-    else if (Game_flag_temp==2){Dino_Game_Pos_Init();DinoGame_Animation();}
+    else if (Game_flag_temp==2)
+    {
+        /* 游戏开始，禁止自动进入STOP */
+        Power_Lock(POWER_LOCK_GAME);
+        Dino_Game_Pos_Init();
+        DinoGame_Animation();
+        /* 游戏退出或结束，重新允许自动休眠 */
+        Power_Unlock(POWER_LOCK_GAME);
+    }
 
         
     switch(Game_flag)
