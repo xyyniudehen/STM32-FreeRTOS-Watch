@@ -36,16 +36,24 @@ volatile uint8_t malloc_failed_flag = 0;
 
 static void TickTask(void *param)
 {
+    TickType_t last_wake_time;
+
+    (void)param;
+
+    last_wake_time = xTaskGetTickCount();
+
     while (1)
     {
         Power_Tick1ms();
         StopWatch_Tick();
         Dino_Tick();
 
-        vTaskDelay(pdMS_TO_TICKS(1));
+        xTaskDelayUntil(
+            &last_wake_time,
+            pdMS_TO_TICKS(1)
+        );
     }
 }
-
 
 static void UITask(void *param)
 {

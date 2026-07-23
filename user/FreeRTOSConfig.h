@@ -18,6 +18,7 @@
 #define configTOTAL_HEAP_SIZE                   ((size_t)(12 * 1024))
 #define configMAX_TASK_NAME_LEN                 16
 
+#define INCLUDE_xTaskDelayUntil    1
 
 #define configPRIO_BITS                         4
 
