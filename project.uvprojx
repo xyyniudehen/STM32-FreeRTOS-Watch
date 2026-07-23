@@ -276,7 +276,7 @@
               </OCR_RVCT3>
               <OCR_RVCT4>
                 <Type>1</Type>
-                <StartAddress>0x8004000</StartAddress>
+                <StartAddress>0x8000000</StartAddress>
                 <Size>0xc000</Size>
               </OCR_RVCT4>
               <OCR_RVCT5>
@@ -673,6 +673,16 @@
               <FileName>Timer.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\System\Timer.h</FilePath>
+            </File>
+            <File>
+              <FileName>Serial.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\System\Serial.c</FilePath>
+            </File>
+            <File>
+              <FileName>Serial.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\System\Serial.h</FilePath>
             </File>
           </Files>
         </Group>

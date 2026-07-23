@@ -72,6 +72,8 @@ virtualFolder:
         - path: System/Delay.h
         - path: System/Timer.c
         - path: System/Timer.h
+        - path: System/Serial.c
+        - path: System/Serial.h
       folders: []
     - name: hardware
       files:
@@ -267,7 +269,7 @@ targets:
               isStartup: true
               mem:
                 size: "0xc000"
-                startAddr: "0x8004000"
+                startAddr: "0x8000000"
               tag: IROM
             - id: 2
               isChecked: false

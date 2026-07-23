@@ -12,6 +12,8 @@
 #include "AD.h"
 #include "Power.h"
 #include "Alarm.h"
+#include "FreeRTOS.h"
+#include "task.h"
 
 uint8_t KeyNum;
 
@@ -133,6 +135,7 @@ int First_Page_Clock(void)
         OLED_Update();
         break;
     }
+    vTaskDelay(5);
 }
 }
 
@@ -192,6 +195,7 @@ int SettingPage(void)
         OLED_Update();
         break;
     }
+    vTaskDelay(5);
     }
 }
 
@@ -333,7 +337,7 @@ int Meun1(void)
         if (DirectFlag ==2)Set_Selection(move_flag, meun_flag-2, meun_flag-1);
         }
          
-
+        vTaskDelay(5);
     }
 
 }
@@ -406,6 +410,7 @@ int Clock_meun(void)
 
 
     }
+    vTaskDelay(5);
     }
 }
 
@@ -530,6 +535,7 @@ int StopWatch(void)
         break;
     }
     Power_Task();
+    vTaskDelay(5);
     }
 }
 
@@ -601,6 +607,7 @@ int LED(void)
         break;
 
     }
+    vTaskDelay(5);
     }
 }
 
@@ -641,7 +648,7 @@ float gz_offset = 0;
 
 void MPU6050_Calculation(void)
 {
-    Delay_ms(5);
+    vTaskDelay(pdMS_TO_TICKS(5));
     MPU6050_GetData(&ax, &ay, &az, &gx, &gy, &gz);
 
     float gx_dps = ((float)gx - gx_offset) / 131.0f;
@@ -688,7 +695,7 @@ void MPU6050_Calibrate(void)
         gy_sum += gy;
         gz_sum += gz;
 
-        Delay_ms(2);
+        vTaskDelay(pdMS_TO_TICKS(2));
     }
 
     gx_offset = gx_sum / 500.0f;
@@ -696,42 +703,51 @@ void MPU6050_Calibrate(void)
     gz_offset = gz_sum / 500.0f;
 }
 
+
+
 int MPU6050(void)
 {
-    while (1)
-    {
-        
-
     static uint8_t calibrated = 0;
 
-    if (calibrated == 0)
+    while (1)
     {
-        OLED_Clear();
-        OLED_ShowString(16, 24, "Calibrating", OLED_8X16);
-        OLED_Update();
+        if (calibrated == 0)
+        {
+            OLED_Clear();
+            OLED_ShowString(16, 24, "Calibrating", OLED_8X16);
+            OLED_Update();
 
-        MPU6050_Calibrate();
-        calibrated = 1;
-    }
+            MPU6050_Calibrate();
+
+            Roll = 0.0f;
+            Pitch = 0.0f;
+            Yaw = 0.0f;
+
+            calibrated = 1;
+        }
 
         Alarm_Task();
+
         KeyNum = kEY_GetNum();
         Power_UIActivityTask(KeyNum);
-        if (KeyNum ==3)
+
+        if (KeyNum == 3)
         {
             OLED_Clear();
             OLED_Update();
             return 0;
         }
+
         OLED_Clear();
+
         MPU6050_Calculation();
         Show_MPU6050_UI();
-        OLED_ReverseArea(0,0,16,16);
+
+        OLED_ReverseArea(0, 0, 16, 16);
         OLED_Update();
 
+        vTaskDelay(pdMS_TO_TICKS(20));
     }
-    
-
 }
 
 //*---------------------------”Œœ∑--------------------------------------*/
@@ -793,6 +809,7 @@ int Game(void)
         break;
 
     }
+    vTaskDelay(5);
     }
 }
 
@@ -809,7 +826,7 @@ void Show_Emoji_UI(void)
     OLED_DrawEllipse(88, 32, 6, 6-i, 1);
     OLED_ShowImage(54, 40, 20, 20, Mouth);
     OLED_Update();
-    Delay_ms(100);
+    vTaskDelay(pdMS_TO_TICKS(100));
     }
     //’ˆ—€
     for (uint8_t i=0; i<3; i++)
@@ -820,9 +837,9 @@ void Show_Emoji_UI(void)
     OLED_DrawEllipse(88, 32, 6, 4+i, 1);
     OLED_ShowImage(54, 40, 20, 20, Mouth);
     OLED_Update();
-    Delay_ms(100);
+    vTaskDelay(pdMS_TO_TICKS(100));
     }
-     Delay_ms(500);
+    vTaskDelay(pdMS_TO_TICKS(500));
 }
 
 int Emoji(void)
@@ -840,7 +857,7 @@ int Emoji(void)
             return 0;
         }
         Show_Emoji_UI();
-
+        vTaskDelay(5);
 
     }
     
@@ -873,7 +890,7 @@ int Gradienter(void)
         }
         Show_Gradienter_UI();
         OLED_Update();
-
+        vTaskDelay(5);
 
     }
     

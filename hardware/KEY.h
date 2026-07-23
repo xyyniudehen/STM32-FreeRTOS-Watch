@@ -8,5 +8,6 @@ void KEY_Init(void);
 uint8_t kEY_GetNum(void);
 void Key_Tick(void);
 void Key3_Tick(void);
+uint8_t Key_GetState(void);
 
 #endif

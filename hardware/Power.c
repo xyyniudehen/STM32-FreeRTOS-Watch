@@ -59,6 +59,17 @@ void Power_WakeupInit(void)
 
 }
 
+static void Power_BusyDelayMs(uint32_t ms)
+{
+    while (ms--)
+    {
+        volatile uint32_t i = 7200;
+        while (i--)
+        {
+            __NOP();
+        }
+    }
+}
 
 void Power_PrepareSleep(void)
 {
@@ -67,7 +78,11 @@ void Power_PrepareSleep(void)
     OLED_Clear();
     OLED_ShowString(24, 24, "sleep...", OLED_8X16);
     OLED_Update();
-    vTaskDelay(pdMS_TO_TICKS(500));
+
+    // vTaskDelay(pdMS_TO_TICKS(500));
+    // Delay_ms(500);
+    Power_BusyDelayMs(500);
+
     LED0_OFF();
     /* 关闭OLED显示 */
     OLED_WriteCommand(0xAE);
@@ -82,28 +97,22 @@ void Power_PrepareSleep(void)
     MPU6050_WriteReg(MPU6050_PWR_MGMT_1, 0x40);
 
     /* 4. 停止TIM2 */
-    TIM_Cmd(TIM2, DISABLE);
+    // TIM_Cmd(TIM2, DISABLE);
 }
 
 void Power_AfterWakeup(void)
 {
-    /* 1. 恢复系统时钟 */
-    SystemInit();
-
-    /* 2. 重新初始化OLED */
     OLED_Init();
     OLED_Clear();
     OLED_Update();
 
-    /* 3. 恢复TIM2 */
-    Init_Timer();
-
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE);
     ADC_Cmd(ADC1, ENABLE);
 
-    /* 4. 唤醒MPU6050 */
+    /* 该函数内部会使用Delay_us，所以必须放在恢复SysTick之前 */
     MPU6050_WriteReg(MPU6050_PWR_MGMT_1, 0x00);
-    vTaskDelay(pdMS_TO_TICKS(100));
+
+    Power_BusyDelayMs(100);
 }
 
 void Power_ClearWakeupKey(void)
@@ -124,7 +133,7 @@ void Power_ClearWakeupKey(void)
 extern uint8_t kEY_Num;
 extern int press_time;
 
-void Power_EnterStopMode(void)
+void  Power_EnterStopMode(void)
 {
     if (Power_LockMask != 0U)
     {
@@ -148,6 +157,11 @@ void Power_EnterStopMode(void)
     EXTI_ClearITPendingBit(EXTI_Line12);
     EXTI_ClearITPendingBit(EXTI_Line13);
 
+    OLED_Clear();
+    OLED_ShowString(0, 0, "Before STOP", OLED_8X16);
+    OLED_Update();
+    // Delay_ms(500);
+    Power_BusyDelayMs(500);
 
     Power_PrepareSleep();
     
@@ -155,12 +169,25 @@ void Power_EnterStopMode(void)
 
     GPIO_ResetBits(GPIOB, GPIO_Pin_12);
 
+    SysTick->CTRL = 0;
+    SysTick->LOAD = 0;
+    SysTick->VAL  = 0;
+
     PWR_EnterSTOPMode(PWR_Regulator_LowPower, PWR_STOPEntry_WFI);
 
-
-    GPIO_SetBits(GPIOB, GPIO_Pin_12);
+    SystemInit();
+    
     Power_AfterWakeup();
 
+    SysTick_Config(SystemCoreClock / configTICK_RATE_HZ);
+
+    OLED_Clear();
+    OLED_ShowString(24, 24, "Wake Up", OLED_8X16);
+    OLED_Update();
+    // vTaskDelay(pdMS_TO_TICKS(500));
+
+    // vTaskDelay(pdMS_TO_TICKS(500));
+     GPIO_SetBits(GPIOB, GPIO_Pin_12);    
 
 
     if (Alarm_RingFlag == 1U)
