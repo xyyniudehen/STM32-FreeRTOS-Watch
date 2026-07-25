@@ -37,26 +37,59 @@ uint8_t MPU6050_readReg(uint8_t RegAddress)
 
 }
 
-void MPU6050_Init(void)
+uint8_t MPU6050_Init(void)
 {
+    uint8_t retry;
+
     MyI2C_Init();
+    Delay_ms(300);
+
+    /* 上电后WHO_AM_I可能第一次读取不稳定，最多重试5次 */
+    for (retry = 0; retry < 5; retry++)
+    {
+        if (MPU6050_readReg(0x75) == 0x68)
+        {
+            break;
+        }
+
+        Delay_ms(50);
+    }
+
+    if (retry >= 5)
+    {
+        return 0;
+    }
+
+    /* 软件复位，复位后PWR_MGMT_1会重新变成0x40 */
+    MPU6050_WriteReg(MPU6050_PWR_MGMT_1, 0x80);
     Delay_ms(100);
 
-    MPU6050_WriteReg(MPU6050_PWR_MGMT_1, 0x80); // 复位
-    Delay_ms(100);
+    /* 唤醒并回读验证 */
+    for (retry = 0; retry < 3; retry++)
+    {
+        MPU6050_WriteReg(MPU6050_PWR_MGMT_1, 0x01);
+        Delay_ms(20);
 
-    MPU6050_WriteReg(MPU6050_PWR_MGMT_1, 0x00); // 唤醒，先用内部时钟
-    Delay_ms(100);
+        if ((MPU6050_readReg(MPU6050_PWR_MGMT_1) & 0x40) == 0)
+        {
+            break;
+        }
+    }
+
+    if (retry >= 3)
+    {
+        return 0;
+    }
 
     MPU6050_WriteReg(MPU6050_PWR_MGMT_2, 0x00);
-    Delay_ms(10);
-    
-
     MPU6050_WriteReg(MPU6050_SMPLRT_DIV, 0x04);
     MPU6050_WriteReg(MPU6050_CONFIG, 0x06);
-    MPU6050_WriteReg(MPU6050_ACCEL_CONFIG, 0x00); // 先用 +-2g
-    MPU6050_WriteReg(MPU6050_GYRO_CONFIG, 0x00);  // 先用 +-250deg/s
-        Delay_ms(100); // 等待数据稳定
+    MPU6050_WriteReg(MPU6050_ACCEL_CONFIG, 0x00);
+    MPU6050_WriteReg(MPU6050_GYRO_CONFIG, 0x00);
+
+    Delay_ms(100);
+
+    return 1;
 }
 
 void MPU6050_GetData(int16_t *AccX, int16_t *ACCY, int16_t *AccZ,

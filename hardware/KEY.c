@@ -1,7 +1,25 @@
 #include "stm32f10x.h"                  // Device header
 #include "Delay.h"
+#include "Serial.h"
+#include "FreeRTOS.h"
+#include "queue.h"
 
-uint8_t kEY_Num;
+static QueueHandle_t KeyQueueHandle = NULL;
+
+static uint32_t KeyQueueDropCount = 0;
+
+/*------------------创建队列-------------------*/
+uint8_t KEY_QueueInit(void)
+{
+    KeyQueueHandle = xQueueCreate(8, sizeof(uint8_t));
+
+    if (KeyQueueHandle == NULL)
+    {
+        return 0;
+    }
+
+    return 1;
+}
 
 void KEY_Init(void)
 {
@@ -18,19 +36,33 @@ void KEY_Init(void)
 
 uint8_t kEY_GetNum(void)
 {
-	uint8_t Temp;
-	if (kEY_Num)
-	{
-		Temp=kEY_Num;
-		kEY_Num=0;
-		return Temp;
-	}
-	else 
-	{
-		return 0;
-	}
-	
+    uint8_t key_num = 0;
+
+    if (KeyQueueHandle == NULL)
+    {
+        return 0;
+    }
+
+    xQueueReceive(KeyQueueHandle, &key_num, 0);
+
+    return key_num;
 }
+
+// uint8_t kEY_GetNum(void)
+// {
+// 	uint8_t Temp;
+// 	if (kEY_Num)
+// 	{
+// 		Temp=kEY_Num;
+// 		kEY_Num=0;
+// 		return Temp;
+// 	}
+// 	else 
+// 	{
+// 		return 0;
+// 	}
+	
+// }
 
 int press_time;
 void Key3_Tick(void)
@@ -78,9 +110,21 @@ void Key_Tick(void)
 			Count=0;
 			PreState=CurrentState;
 			CurrentState=Key_GetState();
-			if (PreState !=0 && CurrentState==0)
+		
+
+		
+			if (PreState != 0 && CurrentState == 0)
 			{
-				kEY_Num=PreState;
+				uint8_t key_num = PreState;
+
+				if (KeyQueueHandle != NULL)
+				{
+					if (xQueueSend(
+							KeyQueueHandle,&key_num,0) != pdPASS)
+					{
+						KeyQueueDropCount++;
+					}
+				}
 			}
 		}
 }

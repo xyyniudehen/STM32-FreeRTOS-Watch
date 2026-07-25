@@ -128,7 +128,6 @@ void Power_ClearWakeupKey(void)
 }
 
 
-extern uint8_t kEY_Num;
 extern int press_time;
 
 void  Power_EnterStopMode(void)
@@ -139,7 +138,7 @@ void  Power_EnterStopMode(void)
     }
 
 
-    Power_ClearWakeupKey();
+    // Power_ClearWakeupKey();
 
     if (Alarm_Enable == 1)
     {
@@ -162,9 +161,12 @@ void  Power_EnterStopMode(void)
 
     GPIO_ResetBits(GPIOB, GPIO_Pin_12);
 
+    Power_ClearWakeupKey();
+
     SysTick->CTRL = 0;
     SysTick->LOAD = 0;
     SysTick->VAL  = 0;
+
 
     PWR_EnterSTOPMode(PWR_Regulator_LowPower, PWR_STOPEntry_WFI);
 

@@ -18,7 +18,6 @@
 #define configTOTAL_HEAP_SIZE                   ((size_t)(12 * 1024))
 #define configMAX_TASK_NAME_LEN                 16
 
-#define INCLUDE_xTaskDelayUntil    1
 
 #define configPRIO_BITS                         4
 
@@ -42,10 +41,14 @@
 #define configTIMER_QUEUE_LENGTH                5
 #define configTIMER_TASK_STACK_DEPTH            128
 
+#define INCLUDE_xTaskDelayUntil    1
+
 #define INCLUDE_vTaskDelay                      1
 #define INCLUDE_vTaskDelete                     1
 #define INCLUDE_vTaskSuspend                    1
 #define INCLUDE_xTaskGetSchedulerState          1
+
+#define INCLUDE_uxTaskGetStackHighWaterMark    1
 
 #define vPortSVCHandler                         SVC_Handler
 #define xPortPendSVHandler                      PendSV_Handler
