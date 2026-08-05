@@ -220,13 +220,13 @@ static void HeartbeatTask(void *param)
         LED0_OFF();
         vTaskDelay(pdMS_TO_TICKS(950));
 
-        monitor_count++;
+        // monitor_count++;
 
-        if (monitor_count >= 5)
-        {
-            monitor_count = 0;
-            Monitor_PrintRuntimeInfo();
-        }
+        // if (monitor_count >= 5)
+        // {
+        //     monitor_count = 0;
+        //     Monitor_PrintRuntimeInfo();
+        // }
     }
 
 

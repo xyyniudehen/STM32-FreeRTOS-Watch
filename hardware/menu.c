@@ -14,6 +14,8 @@
 #include "Alarm.h"
 #include "FreeRTOS.h"
 #include "task.h"
+#include "MPU6050_Reg.h"
+#include "Serial.h"
 
 uint8_t KeyNum;
 
@@ -24,7 +26,17 @@ void Peripheral_Init(void)
     KEY_Init();
     Power_WakeupInit();
     LED_Init();
+    /*---------------------------*/
     MPU6050_Init();
+    if (MPU6050_Init() == 0)
+    {
+        Serial_Send_String("MPU6050 init failed\r\n");
+    }
+    else
+    {
+        Serial_Send_String("MPU6050 init OK\r\n");
+    }
+    /*-------------------------------------------*/
     // MPU6050_Calibrate();
     AD_Init();
 
@@ -684,7 +696,7 @@ void MPU6050_Calibrate(void)
     int32_t gy_sum = 0;
     int32_t gz_sum = 0;
 
-    for (uint16_t i = 0; i < 500; i++)
+    for (uint16_t i = 0; i < 100; i++)
     {
         MPU6050_GetData(&ax, &ay, &az, &gx, &gy, &gz);
 
@@ -746,6 +758,54 @@ int MPU6050(void)
         vTaskDelay(pdMS_TO_TICKS(20));
     }
 }
+
+// int MPU6050(void)
+// {
+//     uint8_t id;
+//     uint8_t pwr;
+//     uint8_t axh;
+//     uint8_t ayh;
+//     uint8_t azh;
+
+//     /* 进入MPU6050页面时主动唤醒传感器 */
+//     MPU6050_WriteReg(MPU6050_PWR_MGMT_1, 0x00);
+//     vTaskDelay(pdMS_TO_TICKS(100));
+
+//     while (1)
+//     {
+//         KeyNum = kEY_GetNum();
+
+//         if (KeyNum == 3)
+//         {
+//             OLED_Clear();
+//             OLED_Update();
+//             return 0;
+//         }
+
+//         id  = MPU6050_readReg(0x75);
+//         pwr = MPU6050_readReg(0x6B);
+
+//         axh = MPU6050_readReg(0x3B);
+//         ayh = MPU6050_readReg(0x3D);
+//         azh = MPU6050_readReg(0x3F);
+
+//         OLED_Clear();
+
+//         OLED_ShowString(0, 0, "ID:", OLED_8X16);
+//         OLED_ShowHexNum(32, 0, id, 2, OLED_8X16);
+
+//         OLED_ShowString(0, 16, "PW:", OLED_8X16);
+//         OLED_ShowHexNum(32, 16, pwr, 2, OLED_8X16);
+
+//         OLED_ShowHexNum(0, 32, axh, 2, OLED_8X16);
+//         OLED_ShowHexNum(40, 32, ayh, 2, OLED_8X16);
+//         OLED_ShowHexNum(80, 32, azh, 2, OLED_8X16);
+
+//         OLED_Update();
+
+//         vTaskDelay(pdMS_TO_TICKS(100));
+//     }
+// }
 
 //*---------------------------游戏--------------------------------------*/
 
