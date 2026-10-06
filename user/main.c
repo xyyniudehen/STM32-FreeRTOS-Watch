@@ -54,6 +54,56 @@ volatile uint8_t malloc_failed_flag = 0;
     /*统运行以来，堆空间最少剩余过多少*/
     volatile size_t heap_min_free = 0;
 
+    static void Monitor_PrintUint32(uint32_t value);
+
+
+//判断帧数的
+static void OLED_BenchmarkTask(void *param)
+{
+    uint32_t i;
+    uint32_t fps;
+    TickType_t start_tick;
+    TickType_t end_tick;
+    TickType_t elapsed_tick;
+
+    (void)param;
+
+    /* 开始计时 */
+    start_tick = xTaskGetTickCount();
+
+    /* 连续发送100个完整屏幕 */
+    for (i = 0; i < 100; i++)
+    {
+        OLED_Update();
+    }
+
+    /* 结束计时 */
+    end_tick = xTaskGetTickCount();
+
+    elapsed_tick = end_tick - start_tick;
+
+    if (elapsed_tick != 0)
+    {
+        fps =
+            100U *
+            configTICK_RATE_HZ /
+            elapsed_tick;
+
+        Serial_Send_String("\r\nOLED benchmark:\r\n");
+
+        Serial_Send_String("100 frames ticks: ");
+        Monitor_PrintUint32((uint32_t)elapsed_tick);
+        Serial_Send_String("\r\n");
+
+        Serial_Send_String("OLED max FPS: ");
+        Monitor_PrintUint32(fps);
+        Serial_Send_String("\r\n");
+    }
+
+    /* 测试完成，删除当前任务 */
+    vTaskDelete(NULL);
+}
+
     /*--------------------------------------计数任务-----------------------------------*/
 static void TickTask(void *param)
 {
@@ -105,24 +155,24 @@ static void UITask(void *param)
     /*--------------------------------------按键任务-----------------------------------*/
 static void KeyTask(void *param)
 {
-    uint8_t state;
-    uint8_t last_state = 0;
+    // uint8_t state;
+    // uint8_t last_state = 0;
 
     while (1)
     {
         Key3_Tick();
         Key_Tick();
 
-        state = Key_GetState();
+        // state = Key_GetState();
 
-        if (state != last_state)
-        {
-            Serial_Send_String("state=");
-            Serial_SendByte(state + '0');
-            Serial_Send_String("\r\n");
+        // if (state != last_state)
+        // {
+        //     Serial_Send_String("state=");
+        //     Serial_SendByte(state + '0');
+        //     Serial_Send_String("\r\n");
 
-            last_state = state;
-        }
+        //     last_state = state;
+        // }
 
         vTaskDelay(1);
     }
@@ -190,6 +240,19 @@ static void HeartbeatTask(void *param)
 {
     uint8_t monitor_count = 0;
 
+    /*--------------OLED_FPS变量------------- */
+    uint32_t last_frame_count;
+    uint32_t current_frame_count;
+    uint32_t frame_delta;
+    uint32_t current_fps;
+
+    TickType_t last_measure_tick;
+    TickType_t current_measure_tick;
+    TickType_t tick_delta;
+
+    last_frame_count = OLED_FrameCount;
+    last_measure_tick = xTaskGetTickCount();
+
     (void)param;
 
     while (1)
@@ -220,13 +283,46 @@ static void HeartbeatTask(void *param)
         LED0_OFF();
         vTaskDelay(pdMS_TO_TICKS(950));
 
-        // monitor_count++;
 
-        // if (monitor_count >= 5)
-        // {
-        //     monitor_count = 0;
-        //     Monitor_PrintRuntimeInfo();
-        // }
+        current_measure_tick = xTaskGetTickCount();
+        current_frame_count = OLED_FrameCount;
+
+        tick_delta = current_measure_tick - last_measure_tick;
+
+        frame_delta = current_frame_count - last_frame_count;
+
+        if (tick_delta != 0)
+        {
+            /*
+             * FPS = 帧数差 ÷ 经过的秒数
+             *
+             * 经过的秒数 =
+             * tick_delta / configTICK_RATE_HZ
+             *
+             * 整理后：
+             * FPS =
+             * frame_delta * configTICK_RATE_HZ / tick_delta
+             */
+            current_fps =
+                frame_delta *
+                configTICK_RATE_HZ /
+                tick_delta;
+
+            Serial_Send_String("OLED current FPS: ");
+            Monitor_PrintUint32(current_fps);
+            Serial_Send_String("\r\n");
+        }
+
+        last_frame_count = current_frame_count;
+        last_measure_tick = current_measure_tick;
+
+        monitor_count++;
+
+        if (monitor_count >= 5)
+        {
+            monitor_count = 0;
+            Monitor_PrintRuntimeInfo();
+        }
     }
 
 
@@ -262,10 +358,8 @@ int main(void)
     Serial_Init();
 
     OLED_Init();
-    OLED_Clear();
-    OLED_Update();
-
     Peripheral_Init();
+
 
     /*--------------------创建队列 --------------------*/
     if (KEY_QueueInit() == 0)
@@ -324,7 +418,19 @@ int main(void)
             LED0_ON();
         }
     }
+        create_ret = xTaskCreate(
+        OLED_BenchmarkTask,
+        "OLED_BENCH",
+        128,
+        NULL,
+        4,
+        NULL
+         );
 
+    if (create_ret != pdPASS)
+    {
+        Serial_Send_String("Create OLED benchmark failed\r\n");
+    }
     vTaskStartScheduler();
     /*
     * 正常情况下不会执行到这里。

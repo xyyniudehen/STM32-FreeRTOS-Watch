@@ -1,7 +1,7 @@
 .\objects\power.o: hardware\Power.c
 .\objects\power.o: .\start\stm32f10x.h
 .\objects\power.o: .\start\core_cm3.h
-.\objects\power.o: E:\xieyiyi\gz\stm32\keil\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\power.o: E:\work\STM32\keil5\ARM\ARMCC\Bin\..\include\stdint.h
 .\objects\power.o: .\start\system_stm32f10x.h
 .\objects\power.o: .\user\stm32f10x_conf.h
 .\objects\power.o: .\Library\stm32f10x_adc.h
@@ -38,3 +38,13 @@
 .\objects\power.o: hardware\MPU6050.h
 .\objects\power.o: hardware\MPU6050_Reg.h
 .\objects\power.o: hardware\LED.h
+.\objects\power.o: .\FREERTOS\FreeRTOS-Kernel\include\FreeRTOS.h
+.\objects\power.o: E:\work\STM32\keil5\ARM\ARMCC\Bin\..\include\stddef.h
+.\objects\power.o: .\user\FreeRTOSConfig.h
+.\objects\power.o: .\FREERTOS\FreeRTOS-Kernel\include\projdefs.h
+.\objects\power.o: .\FREERTOS\FreeRTOS-Kernel\include\portable.h
+.\objects\power.o: .\FREERTOS\FreeRTOS-Kernel\include\deprecated_definitions.h
+.\objects\power.o: .\FREERTOS\FreeRTOS-Kernel\portable\RVDS\ARM_CM3\portmacro.h
+.\objects\power.o: .\FREERTOS\FreeRTOS-Kernel\include\mpu_wrappers.h
+.\objects\power.o: .\FREERTOS\FreeRTOS-Kernel\include\task.h
+.\objects\power.o: .\FREERTOS\FreeRTOS-Kernel\include\list.h

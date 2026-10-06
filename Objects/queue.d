@@ -1,9 +1,9 @@
 .\objects\queue.o: FREERTOS\FreeRTOS-Kernel\queue.c
-.\objects\queue.o: E:\xieyiyi\gz\stm32\keil\ARM\ARMCC\Bin\..\include\stdlib.h
-.\objects\queue.o: E:\xieyiyi\gz\stm32\keil\ARM\ARMCC\Bin\..\include\string.h
+.\objects\queue.o: E:\work\STM32\keil5\ARM\ARMCC\Bin\..\include\stdlib.h
+.\objects\queue.o: E:\work\STM32\keil5\ARM\ARMCC\Bin\..\include\string.h
 .\objects\queue.o: .\FREERTOS\FreeRTOS-Kernel\include\FreeRTOS.h
-.\objects\queue.o: E:\xieyiyi\gz\stm32\keil\ARM\ARMCC\Bin\..\include\stddef.h
-.\objects\queue.o: E:\xieyiyi\gz\stm32\keil\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\queue.o: E:\work\STM32\keil5\ARM\ARMCC\Bin\..\include\stddef.h
+.\objects\queue.o: E:\work\STM32\keil5\ARM\ARMCC\Bin\..\include\stdint.h
 .\objects\queue.o: .\user\FreeRTOSConfig.h
 .\objects\queue.o: .\start\stm32f10x.h
 .\objects\queue.o: .\start\core_cm3.h

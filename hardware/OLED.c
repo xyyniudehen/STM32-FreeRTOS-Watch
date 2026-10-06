@@ -81,6 +81,8 @@
   */
 uint8_t OLED_DisplayBuf[8][128];
 
+volatile uint32_t OLED_FrameCount = 0;
+
 /*********************全局变量*/
 
 
@@ -94,157 +96,174 @@ uint8_t OLED_DisplayBuf[8][128];
   *           用户需要根据参数传入的值，将SCL置为高电平或者低电平
   *           当参数传入0时，置SCL为低电平，当参数传入1时，置SCL为高电平
   */
-void OLED_W_SCL(uint8_t BitValue)
+/* PA5：软件SPI时钟，未来直接对应SPI1_SCK */
+static void OLED_SPI_W_SCK(uint8_t BitValue)
 {
-	uint8_t i;
-	
-	/*根据BitValue的值，将SCL置高电平或者低电平*/
-	GPIO_WriteBit(GPIOB, GPIO_Pin_6, (BitAction)BitValue);
-	for (i = 0; i < 20; i ++);
-	
-	/*如果单片机速度过快，可在此添加适量延时，以避免超出I2C通信的最大速度*/
-	//...
+    GPIO_WriteBit(GPIOA, GPIO_Pin_5, (BitAction)BitValue);
 }
 
-/**
-  * 函    数：OLED写SDA高低电平
-  * 参    数：要写入SDA的电平值，范围：0/1
-  * 返 回 值：无
-  * 说    明：当上层函数需要写SDA时，此函数会被调用
-  *           用户需要根据参数传入的值，将SDA置为高电平或者低电平
-  *           当参数传入0时，置SDA为低电平，当参数传入1时，置SDA为高电平
-  */
-void OLED_W_SDA(uint8_t BitValue)
+/* PA7：软件SPI数据输出，未来直接对应SPI1_MOSI */
+static void OLED_SPI_W_MOSI(uint8_t BitValue)
 {
-	uint8_t i;
-	
-	/*根据BitValue的值，将SDA置高电平或者低电平*/
-	GPIO_WriteBit(GPIOB, GPIO_Pin_7, (BitAction)BitValue);
-	for (i = 0; i < 20; i ++);
-	
-	/*如果单片机速度过快，可在此添加适量延时，以避免超出I2C通信的最大速度*/
-	//...
+    GPIO_WriteBit(GPIOA, GPIO_Pin_7, (BitAction)BitValue);
 }
 
-/**
-  * 函    数：OLED引脚初始化
-  * 参    数：无
-  * 返 回 值：无
-  * 说    明：当上层函数需要初始化时，此函数会被调用
-  *           用户需要将SCL和SDA引脚初始化为开漏模式，并释放引脚
-  */
+/* PB6：OLED片选，低电平有效 */
+static void OLED_W_CS(uint8_t BitValue)
+{
+    GPIO_WriteBit(GPIOB, GPIO_Pin_6, (BitAction)BitValue);
+}
+
+/*
+ * PB7：命令/数据选择
+ * DC=0表示命令，DC=1表示显存数据
+ */
+static void OLED_W_DC(uint8_t BitValue)
+{
+    GPIO_WriteBit(GPIOB, GPIO_Pin_7, (BitAction)BitValue);
+}
+
+/* PB8：OLED复位，低电平有效 */
+static void OLED_W_RES(uint8_t BitValue)
+{
+    GPIO_WriteBit(GPIOB, GPIO_Pin_8, (BitAction)BitValue);
+}
+
+/*
+ * OLED复位专用短延时。
+ * 它不操作SysTick，因此不会破坏FreeRTOS系统节拍。
+ *
+ * 这里只用于OLED初始化的10ms级复位等待，
+ * 不应用于普通任务中的长时间延时。
+ */
+static void OLED_BusyDelayMs(uint32_t ms)
+{
+    while (ms--)
+    {
+        volatile uint32_t i = 7200;
+
+        while (i--)
+        {
+            __NOP();
+        }
+    }
+}
+
 void OLED_GPIO_Init(void)
 {
-	uint32_t i, j;
-	
-	/*在初始化前，加入适量延时，待OLED供电稳定*/
-	for (i = 0; i < 1000; i ++)
-	{
-		for (j = 0; j < 1000; j ++);
-	}
-	
-	/*将SCL和SDA引脚初始化为开漏模式*/
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
-	
-	GPIO_InitTypeDef GPIO_InitStructure;
- 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;
- 	GPIO_Init(GPIOB, &GPIO_InitStructure);
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7;
- 	GPIO_Init(GPIOB, &GPIO_InitStructure);
-	
-	/*释放SCL和SDA*/
-	OLED_W_SCL(1);
-	OLED_W_SDA(1);
+    GPIO_InitTypeDef GPIO_InitStructure;
+
+    /* PA5、PA7位于GPIOA，PB6、PB7、PB8位于GPIOB。 */
+    RCC_APB2PeriphClockCmd(
+        RCC_APB2Periph_GPIOA |
+        RCC_APB2Periph_GPIOB,
+        ENABLE
+    );
+
+    /*
+     * 目前使用软件SPI，所以PA5和PA7配置成普通推挽输出。
+     * 以后改硬件SPI时，再改成GPIO_Mode_AF_PP。
+     */
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5 | GPIO_Pin_7;
+    GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+    /*
+     * OLED的CS、DC、RES不是SPI1外设信号，
+     * 即使以后使用硬件SPI，也仍然是普通GPIO。
+     */
+    GPIO_InitStructure.GPIO_Pin =
+        GPIO_Pin_6 |
+        GPIO_Pin_7 |
+        GPIO_Pin_8;
+    GPIO_Init(GPIOB, &GPIO_InitStructure);
+
+    /*
+     * SPI Mode 0：
+     * 时钟空闲时保持低电平。
+     */
+    OLED_SPI_W_SCK(0);
+    OLED_SPI_W_MOSI(0);
+
+    /* 初始状态不选中OLED。 */
+    OLED_W_CS(1);
+    OLED_W_DC(0);
+    OLED_W_RES(1);
+
+	OLED_BusyDelayMs(10);
+
+    /*
+     * 对SH1106进行硬件复位。
+     * RES拉低一段时间，再恢复为高电平。
+     */
+    OLED_W_RES(0);
+	OLED_BusyDelayMs(10);
+
+    OLED_W_RES(1);
+	OLED_BusyDelayMs(10);
 }
 
-/*********************引脚配置*/
-
-
-/*通信协议*********************/
-
-/**
-  * 函    数：I2C起始
-  * 参    数：无
-  * 返 回 值：无
-  */
-void OLED_I2C_Start(void)
+/*
+ * 软件SPI发送一个字节。
+ * SH1106使用高位先发，并在SCK上升沿读取DI。
+ */
+static void OLED_SPI_SendByte(uint8_t Byte)
 {
-	OLED_W_SDA(1);		//释放SDA，确保SDA为高电平
-	OLED_W_SCL(1);		//释放SCL，确保SCL为高电平
-	OLED_W_SDA(0);		//在SCL高电平期间，拉低SDA，产生起始信号
-	OLED_W_SCL(0);		//起始后把SCL也拉低，即为了占用总线，也为了方便总线时序的拼接
+    uint8_t i;
+
+    for (i = 0; i < 8; i++)
+    {
+        /*
+         * SCK为低时先准备数据。
+         * 依次发送bit7、bit6……bit0。
+         */
+        OLED_SPI_W_MOSI(!!(Byte & (0x80U >> i)));
+
+        /* 上升沿让SH1106读取当前数据。 */
+        OLED_SPI_W_SCK(1);
+
+        /* 回到空闲低电平，为下一位做准备。 */
+        OLED_SPI_W_SCK(0);
+    }
 }
 
-/**
-  * 函    数：I2C终止
-  * 参    数：无
-  * 返 回 值：无
-  */
-void OLED_I2C_Stop(void)
-{
-	OLED_W_SDA(0);		//拉低SDA，确保SDA为低电平
-	OLED_W_SCL(1);		//释放SCL，使SCL呈现高电平
-	OLED_W_SDA(1);		//在SCL高电平期间，释放SDA，产生终止信号
-}
-
-/**
-  * 函    数：I2C发送一个字节
-  * 参    数：Byte 要发送的一个字节数据，范围：0x00~0xFF
-  * 返 回 值：无
-  */
-void OLED_I2C_SendByte(uint8_t Byte)
-{
-	uint8_t i;
-	
-	/*循环8次，主机依次发送数据的每一位*/
-	for (i = 0; i < 8; i++)
-	{
-		/*使用掩码的方式取出Byte的指定一位数据并写入到SDA线*/
-		/*两个!的作用是，让所有非零的值变为1*/
-		OLED_W_SDA(!!(Byte & (0x80 >> i)));
-		OLED_W_SCL(1);	//释放SCL，从机在SCL高电平期间读取SDA
-		OLED_W_SCL(0);	//拉低SCL，主机开始发送下一位数据
-	}
-	
-	OLED_W_SCL(1);		//额外的一个时钟，不处理应答信号
-	OLED_W_SCL(0);
-}
-
-/**
-  * 函    数：OLED写命令
-  * 参    数：Command 要写入的命令值，范围：0x00~0xFF
-  * 返 回 值：无
-  */
 void OLED_WriteCommand(uint8_t Command)
 {
-	OLED_I2C_Start();				//I2C起始
-	OLED_I2C_SendByte(0x78);		//发送OLED的I2C从机地址
-	OLED_I2C_SendByte(0x00);		//控制字节，给0x00，表示即将写命令
-	OLED_I2C_SendByte(Command);		//写入指定的命令
-	OLED_I2C_Stop();				//I2C终止
+    /*
+     * DC=0告诉SH1106，当前字节是控制命令。
+     */
+    OLED_W_DC(0);
+
+    /* CS拉低后，SH1106才接收SPI数据。 */
+    OLED_W_CS(0);
+
+    OLED_SPI_SendByte(Command);
+
+    /* 命令结束，释放OLED。 */
+    OLED_W_CS(1);
 }
 
-/**
-  * 函    数：OLED写数据
-  * 参    数：Data 要写入数据的起始地址
-  * 参    数：Count 要写入数据的数量
-  * 返 回 值：无
-  */
 void OLED_WriteData(uint8_t *Data, uint8_t Count)
 {
-	uint8_t i;
-	
-	OLED_I2C_Start();				//I2C起始
-	OLED_I2C_SendByte(0x78);		//发送OLED的I2C从机地址
-	OLED_I2C_SendByte(0x40);		//控制字节，给0x40，表示即将写数据
-	/*循环Count次，进行连续的数据写入*/
-	for (i = 0; i < Count; i ++)
-	{
-		OLED_I2C_SendByte(Data[i]);	//依次发送Data的每一个数据
-	}
-	OLED_I2C_Stop();				//I2C终止
+    uint8_t i;
+
+    /*
+     * DC=1告诉SH1106，接下来是显存数据。
+     */
+    OLED_W_DC(1);
+    OLED_W_CS(0);
+
+    /*
+     * 整批数据保持CS为低，避免每个字节都切换CS。
+     * OLED_Update每页会发送128字节。
+     */
+    for (i = 0; i < Count; i++)
+    {
+        OLED_SPI_SendByte(Data[i]);
+    }
+
+    OLED_W_CS(1);
 }
 
 /*********************通信协议*/
@@ -296,8 +315,12 @@ void OLED_Init(void)
 
 	OLED_WriteCommand(0xA6);	//设置正常/反色显示，0xA6正常，0xA7反色
 
-	OLED_WriteCommand(0x8D);	//设置充电泵
-	OLED_WriteCommand(0x14);
+	/*
+	* SH1106内部DC-DC升压控制。
+	* 0xAD选择DC-DC控制，0x8B开启DC-DC。
+	*/
+OLED_WriteCommand(0xAD);
+OLED_WriteCommand(0x8B);	
 
 	OLED_WriteCommand(0xAF);	//开启显示
 	
@@ -318,7 +341,7 @@ void OLED_SetCursor(uint8_t Page, uint8_t X)
 	/*因为1.3寸的OLED驱动芯片（SH1106）有132列*/
 	/*屏幕的起始列接在了第2列，而不是第0列*/
 	/*所以需要将X加2，才能正常显示*/
-//	X += 2;
+	X += 2;
 	
 	/*通过指令设置页地址和列地址*/
 	OLED_WriteCommand(0xB0 | Page);					//设置页位置
@@ -428,6 +451,8 @@ void OLED_Update(void)
 		/*连续写入128个数据，将显存数组的数据写入到OLED硬件*/
 		OLED_WriteData(OLED_DisplayBuf[j], 128);
 	}
+
+	    OLED_FrameCount++;
 }
 
 /**

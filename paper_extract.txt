@@ -1,0 +1,749 @@
+---PAGE 1---\nThis article has been accepted for publication in IEEE Transactions on Vehicular Technology. This is the author's version which has not been fully edited and
+content may change prior to final publication. Citation information: DOI 10.1109/TVT.2026.3684154
+1
+Energy Minimization in Backscatter Assisted Short
+Packet Communication Using HARQ-IR
+Yiyi Xie, Liqin Shi, Yinghui Ye, Xi Song and Gan Zheng, Fellow, IEEE
+Abstract—Inthiswork,weinvestigatetheaverageenergymin- BackCom has been widely investigated in IoT networks.
+imization for a backscatter assisted short packet communication Specifically,theauthorsin[3]studiedthetotalratemaximiza-
+(SPC) network employing hybrid automatic repeat request with
+tion problem for a multi-carrier wireless powered BackCom
+incrementalredundancy(HARQ-IR).Intheconsiderednetwork,
+network, where the power allocation, time allocation, power
+an Internet of Things (IoT) node modulates its short packets on
+the energy signal emitted by an energy source (ES) and then reflection coefficient (PRC) and energy allocation coefficien-
+backscatters the modulated signal to the receiver with retrans- t were jointly optimized. Considering the energy-causality
+missions.Consideringanonlinearenergyharvesting(EH)model constraint at the IoT node, the authors in [4] proposed two
+attheIoTnode,weformulateaproblemtominimizetheaverage
+quality-of-service (QoS)-guaranteed adaptive PRC strategies
+energy consumption at the ES by jointly optimizing the power
+to minimize the outage probability (OP) of the IoT node
+reflection coefficient (PRC) and the short-packet blocklength
+of the IoT node as well as the number of transmissions for in cooperative ambient BackCom (AmBC). Further, the ex-
+SPC.Theproblemisformulatedasatwo-dimensionalnonlinear pressions of the IoT node’s OP were derived to evaluate the
+integer programming problem. To address it, we first derive the proposed PRC strategies. Considering that the transmission
+closed-form expression for the IoT node’s PRC using convex
+delay is very critical for time-sensitive IoT, the authors in
+optimization theory. Then we relax the short-packet blocklength
+[5] minimized the total transmission time of all IoT nodes
+asacontinuousvariableandprovethatthetransformedproblem
+with the fixed number of transmissions is convex. Further, an in BackCom based symbiotic radio (SR) with hybrid active-
+iterativealgorithmisproposedtoobtainboththeoptimalshort- passive communication.
+packet blocklength and the optimal number of transmissions. In the above works on BackCom [3]–[5], all IoT nodes
+Simulation results show that the proposed scheme outperforms
+performed long-packet communication (LPC) with the as-
+the scheme without retransmissions in terms of the average
+sumption of infinite blocklength. However, most IoT nodes
+energy consumption of the ES.
+typically engage in short packet communication (SPC), where
+Index Terms—Backscatter communication, short packet com- datapacketsoffiniteblocklengtharetransmitted[6].Different
+munication, retransmissions, average energy consumption.
+fromLPC,theachievableratesofSPCinIoTnodescannotbe
+described by Shannon capacity due to the finite blocklength
+assumption [6]. Additionally, SPC in IoT nodes is inherently
+I. INTRODUCTION
+affected by a non-zero packet error probability (PEP) [6]–
+WITHthemassiveInternetofThings(IoT)devicesbeing [11]. Given these differences, the results from existing studies
+connected to communication networks, deployment on LPC are not applicable to IoT scenarios involving SPC.
+and maintenance costs are increasing rapidly and becoming Consequently, it is crucial to explore backscatter assisted SPC
+crucial problems. To address these challenges, Ambient IoT for IoT applications. For performance analysis, the authors in
+(A-IoT), which has been studied by the Third Generation [7]–[11]sequentiallyderivedclosed-formPEPexpressionsfor
+Partnership Project (3GPP), can alleviate these hurdles for different backscatter assisted SPC networks, including AmBC
+large-scale IoT networks due to its lower complexity and non-orthogonalmultipleaccess(AmBC-NOMA)assistedSPC
+reduced energy consumption [1]. By means of backscatter systems [7], relay assisted short-packet BackCom networks
+communication (BackCom) technology, A-IoT nodes can not [8], multi-antenna unmanned aerial vehicle (UAV) assisted
+onlyharvestenergyfromambientradiofrequency(RF)signals BackCom systems with SPC [9], AmBC networks with hy-
+but also modulate their information onto the RF signals and brid short and long packets [10], and relay-aided cooperative
+reflectthemodulatedsignalstothereceiver[1],[2].Compared AmBC systems with hybrid short and long packets [11].
+to traditional wireless powered communication, BackCom For performance optimization, the authors in [12] proposed
+enjoys lower power consumption and maintenance cost. a reliability-oriented resource allocation scheme to minimize
+the maximum PEP among all IoT nodes for multi-node
+ThisworkwassupportedinpartbytheNationalNaturalScienceFoundation backscatterassistedSPC.Extendingthiswork[12]toamutu-
+of China under Grant 62301421 and in part by the Young Talent Fund of alisticSRnetworkthatsupportsprimaryLPCandmultipleIoT
+University Association for Science and Technology in Shaanxi under Grant
+nodes’SPC,theauthorsin[13]proposedaresourceallocation
+20250114.
+YiyiXie,LiqinShiandYinghuiYearewiththeShaanxiKeyLaboratoryof scheme to maximize the weighted sum throughput of all IoT
+InformationCommunicationNetworkandSecurity,XianUniversityofPosts nodes. As noted, the short-packet transmission of the IoT
+& Telecommunications, China (e-mail: x3369477538@163.com; liqinshi@
+node is inherently characterized by a non-zero PEP. Conse-
+hotmail.com;connectyyh@126.com).
+Xi Song is with School of Electrical and Electronic Engineering, North quently, when combined with the double-path loss inherent in
+ChinaElectricPowerUniversity,619YonghuaNorthStreet,Baoding,China BackCom, ensuring reliable communication presents a severe
+(e-mail:120212501020@ncepu.edu.cn)
+challenge, thus motivating the need for effective reliability
+Gan Zheng is with the School of Engineering, University of Warwick,
+Coventry,CV47AL,UK(e-mail:Gan.Zheng@warwick.ac.uk). enhancement schemes.
+Authorized licensed use limited to: Xi'an Univ of Posts & Telecom. Downloaded on September 21,2026 at 05:03:51 UTC from IEEE Xplore. Restrictions apply.
+© 2026 IEEE. All rights reserved, including rights for text and data mining and training of artificial intelligence and similar technologies. Personal use is permitted,
+but republication/redistribution requires IEEE permission. See https://www.ieee.org/publications/rights/index.html for more information.\n---PAGE 2---\nThis article has been accepted for publication in IEEE Transactions on Vehicular Technology. This is the author's version which has not been fully edited and
+content may change prior to final publication. Citation information: DOI 10.1109/TVT.2026.3684154
+2
+To enhance the reliability of SPC, incorporating retrans- multiple nodes inevitably reduces the channel usage available
+mission mechanisms, such as hybrid automatic repeat request to each node, which may prevent reliable transmission under
+(HARQ)1, is a widely adopted strategy [14]–[18]. The two strict PEP requirements. Specifically, the minimum effective
+primary HARQ schemes are HARQ with chase combin- throughput across all IoT nodes degrades as the number of
+ing (HARQ-CC) and HARQ with incremental redundancy the IoT nodes increases. Therefore, the single-node model
+(HARQ-IR). While prior work in [15] has derived a closed- is adopted, which was also widely used in existing studies
+form expression for the PEP under HARQ-CC, demonstrating on HARQ-assisted SPC [16]–[18]. For practical multi-node
+its performance gains, studies such as [18], [19] indicate that IoT scenarios, the insights from this fundamental analysis
+HARQ-IR offers superior spectral and energy efficiency com- can be extended via time-division multiple access (TDMA),
+pared to HARQ-CC. Despite its advantages, the performance where multiple IoT nodes are assigned to different blocks.
+optimization of backscatter assisted SPC systems utilizing This extension improves per-node transmission performance
+HARQ-IR remains an open problem. To this end, this work at the cost of increased system latency.
+focuses on the HARQ-IR assisted network to ensure reliable LetB denotetheinformationbitsoftheIoTnode,whichis
+short-packet transmissions. transmitted over a time block with N channel uses. Denote T
+In this work, we study the average energy minimization as the duration of each time block. Then we have T =NT ,
+s
+for a backscatter assisted SPC network, where the IoT node where T is the symbol period of the short-packet signal.
+s
+backscatters its short packets to the receiver with retrans- Let M (∀M ∈{1,2,...,M },M ∈Z+) denote the number
+th
+missions. Considering the HARQ-IR scheme and a practical of transmissions for the IoT node’s SPC, where M is the
+th
+nonlinear energy harvesting (EH) model at the IoT node, we maximumallowednumberoftransmissionsandZ+ expresses
+formulate the minimum average energy consumption problem the set of positive integers. Following the HARQ-IR scheme
+by jointly optimizing the PRC and the short-packet block- [16], [17], B is encoded into M subcodewords, each transmit
+lengthoftheIoTnodeaswellasthenumberoftransmissions. with a blocklength n. During the m-th (∀m∈{1,2,...,M})
+To solve the formulated problem, we initially obtain the transmission, the IoT node modulates the m-th subcodeword
+closed-formexpressionforthePRCattheIoTnodebymeans with the blocklength n on the energy signal from the ES
+of the convex optimization theory. Given that the short-packet and then reflects the modulated signal to the receiver. Sub-
+blocklengthoftheIoTnodeisanintegervariable,weapproxi- sequently, the receiver combines the received signal with all
+mateitbyacontinuousvariableandprovethatthetransformed previously received signals and then decodes the information
+problem is convex when the number of transmissions is fixed. oftheIoTnodefromthecombinedsignal.UsingtheCRC,the
+Additionally, we propose an iterative algorithm to jointly receivercanperfectlyknowiftheinformationoftheIoTnode
+optimize both the short-packet blocklength and the number iscorrectlydecodedornot.Ifanerroroccurs,thereceiverwill
+of transmissions. Simulation results exhibit that our proposed send a Negative Acknowledgement (NACK) to the IoT node
+scheme can achieve a lower average energy consumption as withatimedelayD.Otherwise,anAcknowledgement(ACK)
+compared to the scheme without retransmissions. is sent to the IoT node within D. Upon receiving the ACK,
+we consider that B is transmitted to the receiver successfully.
+II. SYSTEMMODEL Conversely, if the NACK is detected at the IoT node, it will
+We consider a backscatter assisted SPC network, where transmit the (m + 1)-th subcodeword and repeat the above
+a single-antenna energy source (ES) broadcasts energy sig- process until B is decoded successfully at the receiver or M
+nals while a single-antenna IoT node backscatters its short is reached.
+packets to a single-antenna receiver with retransmissions. In We consider that all channels are quasi-static, where the
+the considered network, the ES, functioning as the carrier channel gain remains constant in a single time block and
+wave transmitter, can be implemented as a battery-powered may change among different time blocks. Let g , g and g
+0 1 2
+terminal [1], [14]. As indicated by the use cases outlined in denote the channel gains of the ES-to-the receiver link, the
+[20],theconsideredsystemisnothighlylatency-sensitiveand ES-to-the IoT node link and theIoT node-to-the receiver link,
+retransmissions are incorporated to enhance the reliability of respectively. Then we have g = |h |2d −α,i ∈ {0,1,2},
+i i i
+theIoTnode,whichinturnimprovestheoverallsystemenergy whereh andd arethecorrespondingchannelcoefficientand
+i i
+consumption.Sincethesystemenergyconsumptionoriginates distance, and α denotes the path loss factor. Assume that the
+from the ES providing signals for EH and backscattering, the channel state information (CSI) of all links can be perfectly
+energy consumption at the ES should be minimized in order estimated via existing channel estimation methods [12], [21].
+to improve the energy efficiency of the considered network. Let P denote the transmit power of the ES. Denote β with
+s
+In this work, we focus on a single-node scenario to 0 (cid:54) β (cid:54) 1 as the PRC of the IoT node. On this basis, the
+characterize the fundamental performance limit of HARQ- received signal at the IoT node can be divided into two parts,
+IR backscatter transmission under stringent PEP and finite where one part is used for information backscattering and the
+blocklength constraints. Since the total number of channel other part is harvested for energy. For EH, we consider a
+uses within a time block is limited, allocating it among nonlinearEHmodelin[22].Accordingly,theharvestedenergy
+at the IoT node during each transmission is given by
+13GPPinRelease19hasdiscussedtheuseofHARQbasedretransmissions
+forthelinkfromabackscattertransmittertoitsreceiver,specifyingtheimple-
+P (1−exp(−u P +u u ))
+mentation of both Forward Error Correction (FEC) and Cyclic Redundancy E = max 1 r 1 0 nT , (1)
+Check(CRC)[14]. 1+exp(−u P +u u ) s
+1 r 1 2
+Authorized licensed use limited to: Xi'an Univ of Posts & Telecom. Downloaded on September 21,2026 at 05:03:51 UTC from IEEE Xplore. Restrictions apply.
+© 2026 IEEE. All rights reserved, including rights for text and data mining and training of artificial intelligence and similar technologies. Personal use is permitted,
+but republication/redistribution requires IEEE permission. See https://www.ieee.org/publications/rights/index.html for more information.\n---PAGE 3---\nThis article has been accepted for publication in IEEE Transactions on Vehicular Technology. This is the author's version which has not been fully edited and
+content may change prior to final publication. Citation information: DOI 10.1109/TVT.2026.3684154
+3
+where P = (1−β)P g represents the input RF power of where ε represents the PEP threshold and P indicates the
+r s 1 th c
+the EH circuit, P is the maximum output RF power when consumed energy for BackCom at the IoT node. In P1, C1
+max
+the EH circuit is saturated, u denotes the power sensitivity ensures that all M short-packet transmissions are completed
+0
+threshold, u and u are fixed parameters. For information within one time block, thereby satisfying the latency require-
+1 2
+backscattering,theIoTnodebackscattersitsownshort-packet ment. We note that latency constraints of this form have
+information s to the receiver via BackCom. Therefore, the been widely adopted in prior studies on HARQ-IR assisted
+2
+received signal at the receiver is given by SPC during system performance optimization [16], [17]. C2
+(cid:112) (cid:112) constrains that the IoT node’s PEP is below the required
+y = P βg g s s + P g s +n , (2)
+s 1 2 1 2 s 0 1 e threshold after M transmissions. C3 is the energy-causality
+where s is the energy signal transmitted from the ES and constraint which ensures that the harvested energy at the IoT
+1
+n ∼ CN(0,σ2) denotes the additive white Gaussian noise nodeineachtransmissionisnotlessthanitsconsumedenergy.
+e
+(AWGN) at the IoT node. Since both the CSI of all links C5 specifies the range of M. C6 indicates that both n and M
+ands areperfectlyknownbythereceiveratthebeginningof should be non-negative integers.
+1
+eachtimeblock,thesuccessiveinterferencecancellation(SIC) It is evident that P1 constitutes a mixed-integer nonlinear
+technique is adopted at the receiver to eliminate interference programming(MINLP)problem,whichischallengingtosolve
+√
+from ES, namely P g s . Then the signal-to-noise ratio directly.Furthermore,theobjectivefunctionandconstraintC2
+s 0 1
+(SNR) γ at the receiver during each transmission can be exhibitcoupledrelationshipsamongthevariablesn,β andM,
+calculated as γ = Psβg1g2. further complicating the problem and presenting significant
+σ2
+Let Ω denote the event that the receiver fails to decode computational challenges. Specifically, the values of M and
+m
+signals from the IoT node in the m-th transmission. Then the n are influenced by the latency constraint in C1, the PEP
+PEP for decoding s at the receiver after m transmissions requirement in C2, and the energy consumption at the ES
+2(cid:18)m (cid:19) in the objective function. Therefore, determining an effective
+is given by ε = P (cid:84) Ω . Following [16], when n is
+m i balance between M and n to minimize the average energy
+i=1
+infinitely large, it can be derived that Ω ⊆ Ω for the case consumption at the ES, while satisfying both the PEP and
+m k
+of m > k, leading to ε = P(Ω ). However, ε = P(Ω ) latency constraints, is essential for solving P1.
+m m m m
+does not hold when n is finite, posing a significant challenge To address it, we introduce the following lemma to deter-
+in obtaining ε . By adopting the approximation proposed in mine the optimal PRC at the IoT node, denoted by β∗.
+m
+[16], [17], we can approximate ε as Lemma 1: In order to minimize the average energy con-
+m
+(cid:18) (cid:19) sumption at the ES, the optimal PRC of the IoT node is given
+(mnC−B)ln2
+ε ≈Q √ , (3) by
+m
+mnV
+where C = log (1 + γ) denotes the Shannon capacity, β∗ =max
+(cid:26)
+1−
+1
+ln
+(cid:18) P
+max
+eu1u0 +P
+c
+eu1u2 (cid:19)
+,0
+(cid:27)
+.
+2 u P g P −P
+V = γ(γ+2) represents the channel dispersion and Q(x) = 1 s 1 max c
+(γ+1)2 (4)
+√1 (cid:82)∞ e−t 2 2 dt is the Gaussian Q function. Proof. Please refer to Appendix A. (cid:4)
+2π x
+BasedonLemma1,wecanfindthatinordertoachievethe
+minimum of the average energy consumption of the ES, the
+III. AVERAGEENERGYCONSUMPTIONMINIMIZATION
+IoT node should use its maximum allowed harvested energy
+In this work, we aim to minimize the average energy
+to support its short-packet BackCom in each transmission. If
+consumption of the ES by jointly optimizing the short-packet
+the maximum allowed harvested energy is no more than the
+blocklength n and the PRC β of the IoT node as well as energy consumption for BackCom, i.e., β∗ =0, then the IoT
+the number of transmissions M. According to the HARQ-
+node fails to perform BackCom. In this case, P1 is deemed
+IR scheme and using the total probability theorem, we can
+infeasible.
+computetheaverageenergyconsumptionoftheESthroughout In the case of β∗ > 0, we substitute (4) into problem P1.
+M
+the whole time block as P T (cid:80) nε (n,β) [16], [17], Then P1 can be transformed as
+s s m−1
+m=1 (cid:88)M
+where ε 0 = 1 indicates that the IoT node backscatters the (P2) : min P s T s nε m−1 (n,β∗)
+firstsubcodewordwithprobability1.Thentheaverageenergy n,M m=1
+consumption minimization problem can be formulated as s.t. C1, C2(cid:48) :ε M (n,β∗)(cid:54)ε th , C5, C6.
+(cid:88)M Obviously, it is still difficult to get the optimal M and n due
+(P1) : min P T nε (n,β)
+β,n,M s s m=1 m−1 to the high computational complexity caused by the integer
+s.t. C1:Mn+MD (cid:54)N, optimizations. Since M is a positive integer with an upper
+C2:ε (n,β)(cid:54)ε , bound M th , we can decouple P2 into M th subproblems. For
+M th
+each subproblem, M is fixed and then the following problem
+C3:E (cid:62)P nT ,
+c s should be optimally solved, which is given by
+C4:0(cid:54)β (cid:54)1,
+(cid:88)M
+C5:0(cid:54)M (cid:54)M , (P3) :min P s T s nε m−1 (n,β∗)
+th n m=1
+C6:n∈Z+, M ∈Z+, s.t. C1, C2(cid:48), C6(cid:48) :n∈Z+.
+Authorized licensed use limited to: Xi'an Univ of Posts & Telecom. Downloaded on September 21,2026 at 05:03:51 UTC from IEEE Xplore. Restrictions apply.
+© 2026 IEEE. All rights reserved, including rights for text and data mining and training of artificial intelligence and similar technologies. Personal use is permitted,
+but republication/redistribution requires IEEE permission. See https://www.ieee.org/publications/rights/index.html for more information.\n---PAGE 4---\nThis article has been accepted for publication in IEEE Transactions on Vehicular Technology. This is the author's version which has not been fully edited and
+content may change prior to final publication. Citation information: DOI 10.1109/TVT.2026.3684154
+4
+After optimally solving P3 for values of M ranging from 1 10-3
+25
+to M , we can obtain M optimal solutions and calculate
+th th
+the corresponding average energy consumption at the ES. By
+20
+comparingtheseaverageenergyconsumptionvalues,weselect
+the minimum. The solution associated with this minimum 15
+average energy consumption, along with the corresponding
+value of M, constitutes the optimal solution to P2. Therefore, 10
+the main challenge for solving P2 is how to tackle P3.
+5
+As for P3, it is a nonlinear integer optimization problem.
+To address it, we relax the integer variable n to a continuous 0
+5 10 15 20 25 30 35
+one. Accordingly, P3 can be transformed as
+(P4) : min P T (cid:88)M nε (n,β∗) Fig.1. AverageenergyconsumptionoftheESversusthetransmitpowerof
+n s s m=1 m−1 theESPs.
+s.t. C1, C2(cid:48), C6(cid:48)(cid:48) :n(cid:62)0.
+3.5
+10-3
+Lemma 2:P4isproventobeaconvexproblem,whichcan
+be solved by the existing convex methods.
+Proof. Please refer to Appendix B. (cid:4)
+3
+Based on the expression of ε , we can easily prove
+M
+that ε M is monotonically decreasing with n due to ∂ ∂ ε n M =
+−e− w √2 M 2 ln2 (cid:16)√ MC+ √B (cid:17) <0. Through some mathemat- 2.5
+2 nV n M
+ical analysis, we can get the lower bound of n from C2(cid:48),
+denoted by n , and reformulate C2(cid:48) as C2(cid:48)(cid:48) : n (cid:62) n ,
+lo (cid:16) w (cid:113) √ (cid:17)2 (cid:30) low 2
+where n = B + λ2V + λ V M with λ = 500 1000 1500 2000 2500 3000
+low C 4C2(ln2)2 2Cln2
+Q−1(ε ). Combining C1, C2(cid:48)(cid:48), and C6(cid:48), we can calculate the
+th Fig.2. AverageenergyconsumptionoftheESversusthenumberofchannel
+range of n as n low (cid:54)n(cid:54)n upp , where n upp = M N −D. usesN pertimeblock.
+It is worth noting that problem P4 is feasible only when
+n (cid:62) n holds. That is, for the case with n < n ,
+upp low upp low
+P4 is considered infeasible. For the case with n upp = n low , d 2 = 30 m, α = −2.7, B = 240 bits, N = 2000, T s =
+the optimal solution to P4 is given by n upp . For the case with 0.025 ms, T = 50 ms, P s = 23 dBm, P c = 10 µW, D =
+n upp >n low ,wecanemployone-dimensionalsearchmethods, 20 channel uses, M th = 10. The system bandwidth is set as
+i.e., the golden-section search method, etc, to optimally solve 1 MHz and the noise power density is set as −120 dBm/Hz.
+P4,obtainingtheoptimalsolution.AfteroptimallysolvingP4, Following[22],theparametersoftheconsiderednonlinearEH
+we convert the obtained n into an integer by rounding it to model are set as P = 240 µW, u = 5 µW, u = 5000
+max 0 1
+its nearest integer if it is not an integer. We then check if and u =0.0002.
+2
+the obtained n lies within the interval [n ,n ]. If so, it
+low upp Fig. 1 shows the average energy consumption at the ES
+is the optimal solution to P3. Otherwise, we verify whether
+versus its transmit power P under different settings of the
+s
+(cid:98)n+(cid:99) or (cid:98)n+(cid:99)+1 is within the interval, with the valid one
+information bits of the IoT node B. We set B as 200 bits,
+being the optimal solution. If neither is within the interval,
+240 bits and 280 bits, respectively. In order to demonstrate
+P3 is infeasible. Based on the analysis above, we propose an
+theadvantageofusingHARQ-IRbasedretransmissionsinthe
+iterative algorithm to optimally solve P2, thereby obtaining
+proposed scheme, we compare it with the scheme without re-
+the optimal values of M and n. Specifically, for M ranging
+transmissions. As shown in this figure,we observe that all the
+from 1 to M , we apply the golden-section search method to
+th average energy consumptions increase as P increases since
+s
+optimallysolveP4foreachvalueofM,therebyobtainingthe
+the average energy consumption is monotonically increasing
+corresponding optimal solutions for P3. This process results
+with P based on its expression. Besides, a larger B brings
+s
+in M optimal solutions, each with a corresponding average
+th a higher energy consumption. This is due to the fact that
+energyconsumptionattheES.Thesolutionwiththeminimum
+with a larger B, more blocklength is required for the IoT
+average energy consumption is then selected as the optimal
+node to satisfy C2, leading to an increase to the average
+solution to P2. Here the detailed process for the proposed
+energyconsumption.Bycomparison,wealsoobservethatthe
+algorithm is omitted here for brevity.
+proposed scheme is always superior to the scheme without
+retransmissions in terms of the average energy consumption.
+IV. SIMULATIONS This is because the proposed scheme uses HARQ-IR based
+In this section, simulations are provided to demonstrate the retransmissions to improve the transmission reliability of the
+advantage of our proposed scheme in terms of the average IoT node within the finite time resource, bringing a reduction
+energy consumption of the ES. Unless otherwise stated, the to the average energy consumption.
+basic parameters are set as follows [15], [17]: d = 10 m, Fig. 2 shows the average energy consumption at the ES
+1
+Authorized licensed use limited to: Xi'an Univ of Posts & Telecom. Downloaded on September 21,2026 at 05:03:51 UTC from IEEE Xplore. Restrictions apply.
+© 2026 IEEE. All rights reserved, including rights for text and data mining and training of artificial intelligence and similar technologies. Personal use is permitted,
+but republication/redistribution requires IEEE permission. See https://www.ieee.org/publications/rights/index.html for more information.\n---PAGE 5---\nThis article has been accepted for publication in IEEE Transactions on Vehicular Technology. This is the author's version which has not been fully edited and
+content may change prior to final publication. Citation information: DOI 10.1109/TVT.2026.3684154
+5
+10-3 as B increases. This is because a larger B necessitates a
+3.2 greater blocklength allocation to satisfy C2, which in turn
+raisestheenergyconsumedattheES.Furthermore,compared
+3.1
+to the scheme without retransmissions, the advantage of the
+3 proposed scheme is demonstrated in terms of the ES’s energy
+consumption.
+2.9
+2.8 V. CONCLUSION
+In this work, we have introduced HARQ-IR based retrans-
+2.7
+missions into a backscatter assisted SPC network and inves-
+0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1
+10-6 tigated the minimization of the average energy consumption
+at the ES. Considering the nonlinear EH model at the IoT
+Fig. 3. Average energy consumption of the ES versus the PEP threshold
+ε th. node, we have formulated the energy consumption minimiza-
+tion problem by jointly optimizing the PRC and the short-
+packet blocklength of the IoT node as well as the number of
+4.4
+transmissions.Toaddressit,wehavederivedtheoptimalPRC
+4.2 byusingtheconvextheory.Thenwehaveprovedtheproblem
+withthefixednumberoftransmissionsisconvexafterrelaxing
+4
+theshort-packetblocklengthtoacontinuousvariableandthen
+3.8 proposedaniterativealgorithmtoobtaintheminimumaverage
+energy consumption. Simulations showed that our proposed
+3.6
+scheme always achieved lower energy consumption compared
+3.4
+to the scheme without retransmissions.
+3.2
+100 200 300 400 500 600 700 800 900
+APPENDIXA
+Fig.4. TotalenergyconsumptionoftheESversustheinformationbits B To prove Lemma 1, we first need to derive ∂ ∂ ε β m <0. Since
+oftheIoTnode. γ increases with β, it follows that ∂εm < 0 is required.
+∂γ
+Letting x = 1 , we obtain x < 1 for all x due to the
+(1+γ)2
+fact that γ > 0 always holds. Clearly, x decreases as γ
+versus the number of channel uses N per time block, where
+B is set as 200 bits, 240 bits and 280 bits, respectively. It can increases, so it suffices to prove ∂ ∂ ε x m > 0. Letting w m =
+be observed that all average energy consumptions decrease as (mn √ C−B)ln2 = (−1 2 m√nlog 2 x−B)ln2 , we have ε m = Q(w m ),
+mnV mn(1−x)
+N increases. Since a larger N means more blocklengths to and the first-order derivative of ε with respect to x is given
+m
+be allocated to meet C2 for the scenario with bad channel by ∂εm = −e−wm 2 2 ∂wm. By taking the first-order derivative
+conditions, resulting in the reduction of the average energy ∂x ∂x
+of w with respect to x, we have
+m
+consumption.Besides,bycomparingwiththeschemewithout
+retransmissions, the superiority of the proposed scheme in ∂w m = −mn(1−x) √ − 1 2 mnxlnx−xBln2 . (A.1)
+terms of the average energy consumption is illustrated. ∂x 2x mn(1−x) 3 2
+Fig. 3 shows the impact of the PEP threshold ε on the
+th Since x= 1 <1 always holds, we have 1−x>0, ob-
+average energy consumption at the ES, where the feedback √(1+γ)2
+delayD issetas20channeluses,40channeluses,60channel taining 2x mn(1−x)2 3 >0. Letting h(x)=−mn(1−x)−
+usesand80channeluses,respectively.Itcanbeobservedthat 1mnxlnx−xBln2, the first-order derivative of h(x) with
+2
+asε th increases,alltheaverageenergyconsumptionsdecrease respect to x is given by ∂h ∂ ( x x) = 1 2 mn− 1 2 mnlnx−Bln2.
+since fewer blocklengths are needed to meet C2, bringing a Substituting x= 1 into ∂h(x), we have ∂h(x) = 1mn+
+(1+γ)2 ∂x ∂x 2
+reduction to the energy consumption. Another observation is
+[mnlog (1+γ)−B]ln2. Since mnlog (1+γ)−B should
+2 2
+that an increase of D increases the average energy consump- be satisfied for reliable requirements, we obtain ∂h(x) > 0
+tion. This is because a larger D results in smaller values of n ∂x
+always holds. That is to say, h(x) increases as x increases.
+orM duetothelimitedtimeresource,leadingtoahigherPEP
+Since x < 1 holds, we have h(x) < h(1) = −Bln2 < 0.
+√
+in each transmission. This also improves the average energy Combining 2x mn(1−x)3 2 >0, we obtain ∂wm <0. Thus,
+consumption. By comparison, we find the proposed scheme ∂εm >0 is achieved. Accordingly, we can get ∂ ∂ x εm <0.
+always outperforms the scheme without retransmissions in ∂x ∂β
+By observing P1, we find that the objective function
+terms of the average energy consumption, demonstrating the decreases as β increases due to ∂εm < 0. There-
+advantage of the proposed scheme. ∂β
+fore, the optimal PRC β∗ is determined by its upper
+Fig. 4 depicts the total energy consumed by the ES over bound. Further, C3 can be transformed as C3(cid:48) that is giv-
+1000 time blocks as a function of the information bits B of en by C3(cid:48) : β (cid:54) 1 − 1 ln (cid:16) Pmaxeu1u0+Pceu1u2 (cid:17) .
+the IoT node. Here we set the feedback delay D as 0 channel u1Psg1 Pmax−Pc
+Combine C2 and C3(cid:48), β∗ can be described as β∗ =
+uses, 40 channel uses and 80 channel uses, respectively. It (cid:110) (cid:16) (cid:17) (cid:111)
+can be observed that the total energy consumption increases max 1− 1 ln Pmaxeu1u0+Pceu1u2 ,0 .
+u1Psg1 Pmax−Pc
+Authorized licensed use limited to: Xi'an Univ of Posts & Telecom. Downloaded on September 21,2026 at 05:03:51 UTC from IEEE Xplore. Restrictions apply.
+© 2026 IEEE. All rights reserved, including rights for text and data mining and training of artificial intelligence and similar technologies. Personal use is permitted,
+but republication/redistribution requires IEEE permission. See https://www.ieee.org/publications/rights/index.html for more information.\n---PAGE 6---\nThis article has been accepted for publication in IEEE Transactions on Vehicular Technology. This is the author's version which has not been fully edited and
+content may change prior to final publication. Citation information: DOI 10.1109/TVT.2026.3684154
+6
+APPENDIXB REFERENCES
+By observing P4, we find that constraints C1 and C6(cid:48)(cid:48) are [1] S. Moloudi, T. A. Khan, G. Moschetti, R. Narayanan, H. Khan,
+A. Haskou, J. Bergman, B. A. Mouris, A. Hglund, C. Zhang, D. Hui,
+linear. If the objective function is convex and C2(cid:48) is a convex and M. Afshang, “Ambient power-enabled Internet of Things: 3GPP
+constraint, then P4 can be easily proven to be convex. physical layer standardization overview,” IEEE Commun. Stand. Mag.,
+As for C2(cid:48), if ε is a convex function with respect to n, vol.9,no.4,pp.183–191,2025.
+M [2] M.M.Butt,N.R.Mangalvedhe,N.K.Pratas,J.Harrebek,J.Kimionis,
+then C2(cid:48) is also a convex constraint. Taking the second-order M.Tayyab,O.-E.Barbu,R.Ratasuk,andB.Vejlgaard,“AmbientIoT:
+derivatives of ε with respect to n, we have Amissinglinkin3GPPIoT deviceslandscape,”IEEEInternetThings
+M
+Mag.,vol.7,no.2,pp.85–92,2024.
+∂ ∂ 2 n ε M 2 =w M e−wM 2 2 (cid:18) ∂ ∂ w n M (cid:19)2 −e−wM 2 2 ∂ ∂ 2w n2 M. (B.1) [3] m m Y. u u n X lt . i u - L c e a a t n r t r d . i , er v G o b . l a . G c 9 k u , s i c , n a o “ t . O te 8 p r , t c i p o m p m a . l m 1 r 1 u e 9 n s 1 i o c – u a 1 r t c i 1 o e 9 n 5 a n , ll e 2 o t 0 c w 2 a o t 0 i r . o k n s,” fo IE r E w E ir W ele ir s e s le p s o s w C e o r m ed -
+[4] Y. Ye, R. Xu, G. Chen, D. Benevides da Costa, and G. Lu, “QoS-
+It is obvious that w M e−wM 2 2(cid:0)∂ ∂ w n M (cid:1)2 > 0. If ∂ ∂ 2w n2 M < 0 is g er u a a t r iv an e te a e m d b a ie d n a t pt b iv a e ck p s o c w at e te r r re c fl o e m c m tio u n ni c c o a e ti f o fi n c , i ” en I t E f E o E rs W el i f r - e p l o es w s er C e o d m c m oo u p n - .
+satisfied, then we have
+∂2εM
+> 0. Further, by taking the
+Lett.,vol.13,no.10,pp.2812–2816,2024.
+∂n2 [5] S. Lu, Y. Ye, H. Sun, L. Shi, and R. Qingyang Hu, “Minimizing total
+second-order derivatives of w M with respect to n, we obtain transmissiontimeinhybridactive-passivemutualisticsymbioticradio,”
+IEEEWirelessCommun.Lett.,vol.14,no.3,pp.846–850,2025.
+∂2w ln2 (cid:18)√ 3B (cid:19) [6] G.Durisi,T.Koch,andP.Popovski,“Towardmassive,ultrareliable,and
+M =− √ n− 2 3 MC+ √ <0. (B.2) low-latency wireless communication with short packets,” Proc. IEEE,
+∂n2 4 V n M vol.104,no.9,pp.1711–1726,2016.
+[7] X.Pei,X.Wang,Y.Chen,T.Pei,andM.Wen,“AmBC-NOMA-aided
+B co a n s v e e d x o f n un ∂ c ∂ 2 t w i n o 2 M n. < Co 0 r , re w sp e o h n a d v in e gl ∂ y ∂ 2 , n ε C M 2 2 > (cid:48) is 0 p . r T o h v e e r n ef t o o r b e e , ε c M onv is ex a . s IE ho E r E t-p W ac ir k e e le t ss co C m o m m u m n u ic n a . t L io e n tt., fo v r ol. hi 1 g 3 h ,n m o. ob 9 i , li p ty p. V 24 2 0 X 2–2 tr 4 a 0 n 6 sm ,2 is 0 s 2 i 4 o . ns,”
+[8] W.Zhou,L.Shi,Y.Ye,X.Song,H.Sun,andG.Zheng,“Performance
+As for the objective function P s T s (cid:80)M m=1 nε m−1 (n,β∗), if analysis for relay-assisted short-packet backscatter communications,”
+P T nε (n,β∗) is convex, then the objective function is IEEEInternetThingsJ.,vol.11,no.17,pp.28988–29000,2024.
+s s m−1
+proventobeconvex.Lettingf (n)=nε (n)withm(cid:62)2, [9] T.M.Hoang,Q.-N.Van,L.T.Dung,B.C.Nguyen,N.VanVinh,and
+m m−1 T.Kim,“Performanceanalysisandoptimizationofmulti-antennaUAV-
+we take its second-order derivatives as aided multi-user backscatter SPC systems,” IEEE Trans. Intell. Veh.,
+vol.9,no.1,pp.1028–1039,2024.
+∂2f m (n) =2 ∂ε m−1 +n ∂2ε m−1, (B.3) [10] J.Shi,L.Shi,Y.Ye,Y.Zhang,andX.Chu,“Performanceanalysisfor
+ambient backscatter communications with hybrid long-short packets,”
+∂n2 ∂n ∂n2
+IEEEWirelessCommun.Lett.,vol.13,no.5,pp.1325–1329,2024.
+where ∂εm−1 = ∂εm−1 ∂wm−1.Basedon(B.1),wecanrewrite [11] X. Song, D. Han, L. Shi, H. Sun, and R. Q. Hu, “Relay assisted
+∂n ∂wm−1 ∂n cooperativeambientbackscattercommunicationwithhybridlong-short
+(B.3) as: packets,”IEEETrans.Veh.Technol.,vol.73,no.9,pp.12890–12903,
+2024.
+∂2 ∂ f m n2 (n) =ne− wm 2 2 −1 (cid:18) ∂w ∂ m n −1H m−1 − ∂2 ∂ w n m 2 −1 (cid:19) , [12] r T X e r . s a o n G u s r a . c o V e , e a h L l . l . o T c S e a c h t h i i , o n n o Y l. . i , n Y v s o e h l , . or G 7 t 4 - . p , a Z n c h o k e . e n t 2 g , b , p ac p a k n . s d 3 c 4 a G 6 tt 8 . e – r L 3 c 4 u o 7 , m 3 “ , m R 2 u e 0 n l 2 i i a c 5 b a . i t l i i o ty n - s o ,” rie IE nt E e E d
+(B.4) [13] L. Shi, Y. Ye, X. Chu, G. Lu, and S. Sun, “Resource allocation for
+(cid:16)√ (cid:17)
+where ∂w
+∂
+m
+n
+−1 =
+2
+√ln
+n
+2
+V
+m−1C+
+n
+√B
+m−1
+and H
+m−1
+= m
+pa
+u
+c
+l
+k
+ti
+e
+-
+t
+I
+s
+o
+,”
+T
+I
+-
+E
+no
+E
+d
+E
+e
+T
+m
+ra
+u
+n
+tu
+s.
+al
+W
+is
+i
+t
+r
+i
+e
+c
+le
+s
+s
+y
+s
+m
+C
+b
+o
+io
+m
+ti
+m
+c
+u
+r
+n
+a
+.
+d
+,
+i
+v
+o
+ol
+w
+.
+i
+2
+th
+5,
+h
+p
+y
+p
+b
+.
+r
+1
+id
+84
+l
+2
+o
+–
+n
+1
+g
+8
+a
+5
+n
+6
+d
+,2
+s
+0
+h
+2
+o
+6
+rt
+.
+w bi m ni − n 1 g ∂ ∂ w ∂ w m ∂ n m − n − 1 1 − > n 2. 0 B , a w s e ed c o an n( o B b . t 2 a ) i , n w ∂ e 2 ∂ f h (cid:16) m n a √2 v (n e ) − > ∂ ∂ 2 0 n w 2 i m f H > m 0 − . 1 Co > m (cid:17) 0 - [ [ 1 1 4 5 ] ] o 3 L f G . T P S P h h i i n T , g R J s . ) 38 i S n . h 7 i N 6 , 9 R Y V ,” . 1 D Y 9. e e 0 , c . . 0 G , 2 . “ 0 S 2 Z t 4 u h . d e y ng o , n a s n o d lut G io . ns L f u o , r “ A A m m b b ie ie n n t t Io b T ac ( k In s t c e a r t n te e r t
+holds. Substituting ∂wm−1 = √ln2 m−1C+ √B communication with HARQ assisted hybrid long-short packets,” IEEE
+∂n 2 nV n m−1 Commun.Lett.,vol.28,no.10,pp.2258–2262,2024.
+into H , we have H = 1 R , where [16] A. Avranas, M. Kountouris, and P. Ciblat, “Energy-latency tradeoff in
+m−1 m−1 2n2(m−1)V m−1
+ultra-reliablelow-latencycommunicationwithretransmissions,”IEEEJ.
+R = C2(ln2)2n2(m−1)2 −4Vn(m−1)−B2(ln2)2.
+m−1 Sel.AreasCommun.,vol.36,no.11,pp.2475–2485,2018.
+Letti√ng R m−1 = 0, its positive solution is given by n + = [17] Y. Zhu, Y. Hu, A. Schmeink, and J. Gross, “Energy minimization of
+2V+ 4V2+C2B2(ln2)4 mobileedgecomputingnetworkswithHARQinthefiniteblocklength
+. Under reliability constraints and ap-
+(m−1)C2(ln2)2 regime,”IEEETrans.WirelessCommun.,vol.21,no.9,pp.7105–7120,
+proximate conditions of PEP, i.e., n>100, we have 2022.
+[18] E. Dosti, M. Shehab, H. Alves, and M. Latva-Aho, “Ultra reliable
+(cid:113) communicationviaoptimumpowerallocationforHARQretransmission
+2V + 4V2+C2B2(ln2)4 4V +Bln2 schemes,”IEEEAccess,vol.8,pp.89768–89781,2020.
+n + = (m−1)C2(ln2)2 (cid:54) (m−1)Cln2 [19]
+E
+A
+.
+.
+H
+A
+o
+h
+s
+m
+sa
+e
+i
+d
+n
+,
+,
+A
+“H
+.
+y
+A
+br
+l
+i
+-
+d
+Dw
+au
+ei
+t
+k
+o
+,
+ma
+Y
+t
+.
+ic
+Ir
+r
+a
+e
+q
+p
+i
+e
+,
+at
+H
+r
+.
+eq
+M
+ue
+u
+s
+k
+t
+ht
+(
+a
+H
+r,
+A
+M
+RQ
+.
+)
+N
+i
+a
+n
+ee
+w
+m
+i
+,
+rel
+a
+e
+n
+s
+d
+s
+(a) B B communicationssystemsandstandards:Acontemporarysurvey,”IEEE
+≈ = (cid:54)n. (B.5) Commun.Surv.Tutorials,vol.23,no.4,pp.2711–2752,2021.
+(m−1)C (m−1)log 2 (1+γ) [20] 3GPPTR22.840V19.0.0,“StudyonAmbientPower-EnabledInternet
+ofThings,”Dec.2023.
+where step (a) holds due to the fact that 4V is smaller than [21] K.CaoandQ.Tang,“EnergyefficiencymaximizationforRIS-assisted
+1 for the reliable transmission [17]. Sin C ce ln n 2 (cid:62) n always MISOsymbioticradiosystemsbasedondeepreinforcementlearning,”
++ IEEECommun.Lett.,vol.28,no.1,pp.88–92,2024.
+holds, we have R m−1 (cid:62)0. Thus, f m (n) is a convex function. [22] S. Wang, M. Xia, K. Huang, and Y.-C. Wu, “Wirelessly powered
+SinceP T (cid:80)M nε (n,β∗)isasanon-negativeweighted two-waycommunicationwithnonlinearenergyharvestingmodel:Rate
+sum of
+s
+th
+s
+e fu
+m
+n
+=
+ct
+1
+ion
+m
+P
+−
+T
+1
+nε (n,β∗) over different values
+regionsunderfixedandmobilerelay,”IEEETrans.WirelessCommun.,
+s s m−1 vol.16,no.12,pp.8190–8204,2017.
+m,P T (cid:80)M nε (n,β∗)isalsoconvex.Basedtheabove
+s s m=1 m−1
+analysis, P4 is proven to be convex.
+Authorized licensed use limited to: Xi'an Univ of Posts & Telecom. Downloaded on September 21,2026 at 05:03:51 UTC from IEEE Xplore. Restrictions apply.
+© 2026 IEEE. All rights reserved, including rights for text and data mining and training of artificial intelligence and similar technologies. Personal use is permitted,
+but republication/redistribution requires IEEE permission. See https://www.ieee.org/publications/rights/index.html for more information.

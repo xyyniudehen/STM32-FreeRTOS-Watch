@@ -8,6 +8,13 @@ static QueueHandle_t KeyQueueHandle = NULL;
 
 static uint32_t KeyQueueDropCount = 0;
 
+/*
+ * 按键队列约定：
+ * KeyTask负责发送按键事件；
+ * 所有kEY_GetNum()调用必须发生在UITask调用链中；
+ * 其他FreeRTOS任务不得直接消费KeyQueue。
+ */
+
 /*------------------创建队列-------------------*/
 uint8_t KEY_QueueInit(void)
 {

@@ -1,7 +1,7 @@
 .\objects\myi2c.o: hardware\MyI2C.c
 .\objects\myi2c.o: .\start\stm32f10x.h
 .\objects\myi2c.o: .\start\core_cm3.h
-.\objects\myi2c.o: E:\xieyiyi\gz\stm32\keil\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\myi2c.o: E:\work\STM32\keil5\ARM\ARMCC\Bin\..\include\stdint.h
 .\objects\myi2c.o: .\start\system_stm32f10x.h
 .\objects\myi2c.o: .\user\stm32f10x_conf.h
 .\objects\myi2c.o: .\Library\stm32f10x_adc.h
