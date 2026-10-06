@@ -2,7 +2,7 @@
 .\objects\stm32f10x_usart.o: Library\stm32f10x_usart.h
 .\objects\stm32f10x_usart.o: .\start\stm32f10x.h
 .\objects\stm32f10x_usart.o: .\start\core_cm3.h
-.\objects\stm32f10x_usart.o: E:\xieyiyi\gz\stm32\keil\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\stm32f10x_usart.o: E:\work\STM32\keil5\ARM\ARMCC\Bin\..\include\stdint.h
 .\objects\stm32f10x_usart.o: .\start\system_stm32f10x.h
 .\objects\stm32f10x_usart.o: .\user\stm32f10x_conf.h
 .\objects\stm32f10x_usart.o: .\Library\stm32f10x_adc.h

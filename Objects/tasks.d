@@ -1,9 +1,9 @@
 .\objects\tasks.o: FREERTOS\FreeRTOS-Kernel\tasks.c
-.\objects\tasks.o: E:\xieyiyi\gz\stm32\keil\ARM\ARMCC\Bin\..\include\stdlib.h
-.\objects\tasks.o: E:\xieyiyi\gz\stm32\keil\ARM\ARMCC\Bin\..\include\string.h
+.\objects\tasks.o: E:\work\STM32\keil5\ARM\ARMCC\Bin\..\include\stdlib.h
+.\objects\tasks.o: E:\work\STM32\keil5\ARM\ARMCC\Bin\..\include\string.h
 .\objects\tasks.o: .\FREERTOS\FreeRTOS-Kernel\include\FreeRTOS.h
-.\objects\tasks.o: E:\xieyiyi\gz\stm32\keil\ARM\ARMCC\Bin\..\include\stddef.h
-.\objects\tasks.o: E:\xieyiyi\gz\stm32\keil\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\tasks.o: E:\work\STM32\keil5\ARM\ARMCC\Bin\..\include\stddef.h
+.\objects\tasks.o: E:\work\STM32\keil5\ARM\ARMCC\Bin\..\include\stdint.h
 .\objects\tasks.o: .\user\FreeRTOSConfig.h
 .\objects\tasks.o: .\start\stm32f10x.h
 .\objects\tasks.o: .\start\core_cm3.h
