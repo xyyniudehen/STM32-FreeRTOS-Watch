@@ -1,7 +1,7 @@
 .\objects\key.o: hardware\KEY.c
 .\objects\key.o: .\start\stm32f10x.h
 .\objects\key.o: .\start\core_cm3.h
-.\objects\key.o: E:\xieyiyi\gz\stm32\keil\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\key.o: E:\work\STM32\keil5\ARM\ARMCC\Bin\..\include\stdint.h
 .\objects\key.o: .\start\system_stm32f10x.h
 .\objects\key.o: .\user\stm32f10x_conf.h
 .\objects\key.o: .\Library\stm32f10x_adc.h
@@ -29,3 +29,15 @@
 .\objects\key.o: .\Library\stm32f10x_wwdg.h
 .\objects\key.o: .\Library\misc.h
 .\objects\key.o: .\System\Delay.h
+.\objects\key.o: .\System\Serial.h
+.\objects\key.o: .\FREERTOS\FreeRTOS-Kernel\include\FreeRTOS.h
+.\objects\key.o: E:\work\STM32\keil5\ARM\ARMCC\Bin\..\include\stddef.h
+.\objects\key.o: .\user\FreeRTOSConfig.h
+.\objects\key.o: .\FREERTOS\FreeRTOS-Kernel\include\projdefs.h
+.\objects\key.o: .\FREERTOS\FreeRTOS-Kernel\include\portable.h
+.\objects\key.o: .\FREERTOS\FreeRTOS-Kernel\include\deprecated_definitions.h
+.\objects\key.o: .\FREERTOS\FreeRTOS-Kernel\portable\RVDS\ARM_CM3\portmacro.h
+.\objects\key.o: .\FREERTOS\FreeRTOS-Kernel\include\mpu_wrappers.h
+.\objects\key.o: .\FREERTOS\FreeRTOS-Kernel\include\queue.h
+.\objects\key.o: .\FREERTOS\FreeRTOS-Kernel\include\task.h
+.\objects\key.o: .\FREERTOS\FreeRTOS-Kernel\include\list.h

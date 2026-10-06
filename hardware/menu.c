@@ -19,6 +19,46 @@
 
 uint8_t KeyNum;
 
+/*************²âÊÔMPU6050º¯Êý***************/
+static void MPU_PrintHex8(uint8_t value)
+{
+    const char hex[] = "0123456789ABCDEF";
+
+    Serial_SendByte(hex[(value >> 4) & 0x0F]);
+    Serial_SendByte(hex[value & 0x0F]);
+}
+
+static void MPU_PrintState(const char *name, uint8_t result)
+{
+    uint8_t who;
+    uint8_t pwr;
+    uint8_t axh;
+    uint8_t axl;
+
+    who = MPU6050_readReg(MPU6050_WHO_AM_I);
+    pwr = MPU6050_readReg(MPU6050_PWR_MGMT_1);
+    axh = MPU6050_readReg(MPU6050_ACCEL_XOUT_H);
+    axl = MPU6050_readReg(MPU6050_ACCEL_XOUT_L);
+
+    Serial_Send_String(name);
+
+    Serial_Send_String("=");
+    Serial_SendByte(result ? '1' : '0');
+
+    Serial_Send_String(" WHO=0x");
+    MPU_PrintHex8(who);
+
+    Serial_Send_String(" PWR=0x");
+    MPU_PrintHex8(pwr);
+
+    Serial_Send_String(" AX=0x");
+    MPU_PrintHex8(axh);
+    MPU_PrintHex8(axl);
+
+    Serial_Send_String("\r\n");
+}
+
+
 void Peripheral_Init(void)
 {
     MyRTC_Init();
@@ -27,8 +67,24 @@ void Peripheral_Init(void)
     Power_WakeupInit();
     LED_Init();
     /*---------------------------*/
-    MPU6050_Init();
-    if (MPU6050_Init() == 0)
+    // MPU6050_Init();
+
+    // if (MPU6050_Init() == 0)
+    // {
+    //     Serial_Send_String("MPU6050 init failed\r\n");
+    // }
+    // else
+    // {
+    //     Serial_Send_String("MPU6050 init OK\r\n");
+    // }
+    // /*-------------------------------------------*/
+    // // MPU6050_Calibrate();
+
+    uint8_t mpu_init_result;
+
+    mpu_init_result = MPU6050_Init();
+
+    if (mpu_init_result == 0)
     {
         Serial_Send_String("MPU6050 init failed\r\n");
     }
@@ -36,8 +92,8 @@ void Peripheral_Init(void)
     {
         Serial_Send_String("MPU6050 init OK\r\n");
     }
-    /*-------------------------------------------*/
-    // MPU6050_Calibrate();
+
+
     AD_Init();
 
 }
@@ -707,9 +763,9 @@ void MPU6050_Calibrate(void)
         vTaskDelay(pdMS_TO_TICKS(2));
     }
 
-    gx_offset = gx_sum / 500.0f;
-    gy_offset = gy_sum / 500.0f;
-    gz_offset = gz_sum / 500.0f;
+    gx_offset = gx_sum / 100.0f;
+    gy_offset = gy_sum / 100.0f;
+    gz_offset = gz_sum / 100.0f;
 }
 
 
