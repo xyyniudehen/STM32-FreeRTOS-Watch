@@ -163,6 +163,7 @@ static void KeyTask(void *param)
         Key3_Tick();
         Key_Tick();
 
+        /************下面注释掉的是串口调试的代码***********/
         // state = Key_GetState();
 
         // if (state != last_state)

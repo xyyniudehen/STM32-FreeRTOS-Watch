@@ -1,9 +1,9 @@
 .\objects\heap_4.o: FREERTOS\FreeRTOS-Kernel\portable\MemMang\heap_4.c
-.\objects\heap_4.o: E:\work\STM32\keil5\ARM\ARMCC\Bin\..\include\stdlib.h
-.\objects\heap_4.o: E:\work\STM32\keil5\ARM\ARMCC\Bin\..\include\string.h
+.\objects\heap_4.o: E:\xieyiyi\gz\stm32\keil\ARM\ARMCC\Bin\..\include\stdlib.h
+.\objects\heap_4.o: E:\xieyiyi\gz\stm32\keil\ARM\ARMCC\Bin\..\include\string.h
 .\objects\heap_4.o: .\FREERTOS\FreeRTOS-Kernel\include\FreeRTOS.h
-.\objects\heap_4.o: E:\work\STM32\keil5\ARM\ARMCC\Bin\..\include\stddef.h
-.\objects\heap_4.o: E:\work\STM32\keil5\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\heap_4.o: E:\xieyiyi\gz\stm32\keil\ARM\ARMCC\Bin\..\include\stddef.h
+.\objects\heap_4.o: E:\xieyiyi\gz\stm32\keil\ARM\ARMCC\Bin\..\include\stdint.h
 .\objects\heap_4.o: .\user\FreeRTOSConfig.h
 .\objects\heap_4.o: .\start\stm32f10x.h
 .\objects\heap_4.o: .\start\core_cm3.h

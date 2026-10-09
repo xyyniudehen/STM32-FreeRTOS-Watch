@@ -1,7 +1,7 @@
 .\objects\main.o: user\main.c
 .\objects\main.o: .\start\stm32f10x.h
 .\objects\main.o: .\start\core_cm3.h
-.\objects\main.o: E:\work\STM32\keil5\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\main.o: E:\xieyiyi\gz\stm32\keil\ARM\ARMCC\Bin\..\include\stdint.h
 .\objects\main.o: .\start\system_stm32f10x.h
 .\objects\main.o: .\user\stm32f10x_conf.h
 .\objects\main.o: .\Library\stm32f10x_adc.h
@@ -29,7 +29,7 @@
 .\objects\main.o: .\Library\stm32f10x_wwdg.h
 .\objects\main.o: .\Library\misc.h
 .\objects\main.o: .\FREERTOS\FreeRTOS-Kernel\include\FreeRTOS.h
-.\objects\main.o: E:\work\STM32\keil5\ARM\ARMCC\Bin\..\include\stddef.h
+.\objects\main.o: E:\xieyiyi\gz\stm32\keil\ARM\ARMCC\Bin\..\include\stddef.h
 .\objects\main.o: .\user\FreeRTOSConfig.h
 .\objects\main.o: .\FREERTOS\FreeRTOS-Kernel\include\projdefs.h
 .\objects\main.o: .\FREERTOS\FreeRTOS-Kernel\include\portable.h

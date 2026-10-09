@@ -7,6 +7,7 @@ static void MyI2C_Delay(void)
 
     while (i--)
     {
+        /*空操作，CPU空转*/
         __NOP();
     }
 }
@@ -63,6 +64,7 @@ void MyI2C_SendByte(uint8_t Byte)
     uint8_t i;
     for (i=0; i<8; i++)
     {
+    /*------------高位先行发送------------*/
     MyI2C_W_SDA(!!(Byte & (0x80 >> i)));
     MyI2C_W_SCL(1);
     MyI2C_W_SCL(0);

@@ -1,7 +1,7 @@
 .\objects\alarm.o: hardware\Alarm.c
 .\objects\alarm.o: .\start\stm32f10x.h
 .\objects\alarm.o: .\start\core_cm3.h
-.\objects\alarm.o: E:\work\STM32\keil5\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\alarm.o: E:\xieyiyi\gz\stm32\keil\ARM\ARMCC\Bin\..\include\stdint.h
 .\objects\alarm.o: .\start\system_stm32f10x.h
 .\objects\alarm.o: .\user\stm32f10x_conf.h
 .\objects\alarm.o: .\Library\stm32f10x_adc.h
@@ -34,10 +34,10 @@
 .\objects\alarm.o: hardware\KEY.h
 .\objects\alarm.o: hardware\MyRTC.h
 .\objects\alarm.o: .\System\Delay.h
-.\objects\alarm.o: E:\work\STM32\keil5\ARM\ARMCC\Bin\..\include\time.h
+.\objects\alarm.o: E:\xieyiyi\gz\stm32\keil\ARM\ARMCC\Bin\..\include\time.h
 .\objects\alarm.o: hardware\Power.h
 .\objects\alarm.o: .\FREERTOS\FreeRTOS-Kernel\include\FreeRTOS.h
-.\objects\alarm.o: E:\work\STM32\keil5\ARM\ARMCC\Bin\..\include\stddef.h
+.\objects\alarm.o: E:\xieyiyi\gz\stm32\keil\ARM\ARMCC\Bin\..\include\stddef.h
 .\objects\alarm.o: .\user\FreeRTOSConfig.h
 .\objects\alarm.o: .\FREERTOS\FreeRTOS-Kernel\include\projdefs.h
 .\objects\alarm.o: .\FREERTOS\FreeRTOS-Kernel\include\portable.h

@@ -3,7 +3,7 @@
 <title>Static Call Graph - [.\Objects\project.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\Objects\project.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Fri Oct 02 14:25:07 2026
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Thu Oct 08 20:10:33 2026
 <BR><P>
 <H3>Maximum Stack Usage =        508 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -2249,8 +2249,8 @@ Global Symbols
 <LI><a href="#[c7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OLED_Update
 <LI><a href="#[c6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OLED_ShowString
 <LI><a href="#[c5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OLED_Clear
-<LI><a href="#[157]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Power_BusyDelayMs
 <LI><a href="#[f7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;LED0_OFF
+<LI><a href="#[157]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Power_BusyDelayMs
 </UL>
 <BR>[Called By]<UL><LI><a href="#[126]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Power_EnterStopMode
 </UL>
@@ -2337,9 +2337,9 @@ Global Symbols
 <LI><a href="#[b1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;AD_Init
 <LI><a href="#[142]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OLED_GPIO_Init
 <LI><a href="#[fb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;KEY_Init
-<LI><a href="#[156]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Power_AfterWakeup
 <LI><a href="#[106]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;LED_Init
 <LI><a href="#[162]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Serial_Init
+<LI><a href="#[156]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Power_AfterWakeup
 </UL>
 
 <P><STRONG><a name="[181]"></a>RCC_GetClocksFreq</STRONG> (Thumb, 154 bytes, Stack size 8 bytes, stm32f10x_rcc.o(i.RCC_GetClocksFreq))
@@ -2462,8 +2462,8 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[165]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART_SendData
 <LI><a href="#[166]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART_GetFlagStatus
 </UL>
-<BR>[Called By]<UL><LI><a href="#[f9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Monitor_PrintUint32
-<LI><a href="#[f8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Serial_Send_String
+<BR>[Called By]<UL><LI><a href="#[f8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Serial_Send_String
+<LI><a href="#[f9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Monitor_PrintUint32
 </UL>
 
 <P><STRONG><a name="[f8]"></a>Serial_Send_String</STRONG> (Thumb, 24 bytes, Stack size 16 bytes, serial.o(i.Serial_Send_String))
@@ -2857,7 +2857,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_md.o(RESET)
 </UL>
-<P><STRONG><a name="[39]"></a>SystemInit</STRONG> (Thumb, 64 bytes, Stack size 8 bytes, system_stm32f10x.o(i.SystemInit))
+<P><STRONG><a name="[39]"></a>SystemInit</STRONG> (Thumb, 62 bytes, Stack size 8 bytes, system_stm32f10x.o(i.SystemInit))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = SystemInit
 </UL>
 <BR>[Calls]<UL><LI><a href="#[17c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SetSysClock
@@ -3066,12 +3066,12 @@ Global Symbols
 <LI><a href="#[149]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OLED_Init
 <LI><a href="#[fd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;KEY_QueueInit
 <LI><a href="#[fb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;KEY_Init
-<LI><a href="#[18f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskCreate
-<LI><a href="#[190]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskStartScheduler
 <LI><a href="#[106]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;LED_Init
 <LI><a href="#[f6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;LED0_ON
 <LI><a href="#[f8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Serial_Send_String
 <LI><a href="#[162]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Serial_Init
+<LI><a href="#[18f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskCreate
+<LI><a href="#[190]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskStartScheduler
 </UL>
 <BR>[Called By]<UL><LI><a href="#[76]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__rt_entry_main
 </UL>
@@ -3871,15 +3871,15 @@ Local Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 64<LI>Call Chain = HeartbeatTask &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[c8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskDelay
+<LI><a href="#[f6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;LED0_ON
+<LI><a href="#[f7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;LED0_OFF
+<LI><a href="#[f8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Serial_Send_String
 <LI><a href="#[f2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGetTickCount
 <LI><a href="#[f5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xPortGetMinimumEverFreeHeapSize
 <LI><a href="#[f4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xPortGetFreeHeapSize
 <LI><a href="#[f3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uxTaskGetStackHighWaterMark
 <LI><a href="#[f9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Monitor_PrintUint32
 <LI><a href="#[fa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Monitor_PrintRuntimeInfo
-<LI><a href="#[f6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;LED0_ON
-<LI><a href="#[f7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;LED0_OFF
-<LI><a href="#[f8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Serial_Send_String
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> main.o(i.main)
 </UL>
@@ -3899,8 +3899,8 @@ Local Symbols
 <P><STRONG><a name="[fa]"></a>Monitor_PrintRuntimeInfo</STRONG> (Thumb, 122 bytes, Stack size 8 bytes, main.o(i.Monitor_PrintRuntimeInfo))
 <BR><BR>[Stack]<UL><LI>Max Depth = 40<LI>Call Chain = Monitor_PrintRuntimeInfo &rArr; Monitor_PrintUint32 &rArr; Serial_SendByte
 </UL>
-<BR>[Calls]<UL><LI><a href="#[f9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Monitor_PrintUint32
-<LI><a href="#[f8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Serial_Send_String
+<BR>[Calls]<UL><LI><a href="#[f8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Serial_Send_String
+<LI><a href="#[f9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Monitor_PrintUint32
 </UL>
 <BR>[Called By]<UL><LI><a href="#[3e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HeartbeatTask
 </UL>
@@ -3919,10 +3919,10 @@ Local Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 112<LI>Call Chain = OLED_BenchmarkTask &rArr; vTaskDelete &rArr; prvDeleteTCB &rArr; vPortFree &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[c7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OLED_Update
+<LI><a href="#[f8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Serial_Send_String
 <LI><a href="#[f2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGetTickCount
 <LI><a href="#[13b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskDelete
 <LI><a href="#[f9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Monitor_PrintUint32
-<LI><a href="#[f8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Serial_Send_String
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> main.o(i.main)
 </UL>

@@ -1,8 +1,8 @@
 .\objects\timers.o: FREERTOS\FreeRTOS-Kernel\timers.c
-.\objects\timers.o: E:\work\STM32\keil5\ARM\ARMCC\Bin\..\include\stdlib.h
+.\objects\timers.o: E:\xieyiyi\gz\stm32\keil\ARM\ARMCC\Bin\..\include\stdlib.h
 .\objects\timers.o: .\FREERTOS\FreeRTOS-Kernel\include\FreeRTOS.h
-.\objects\timers.o: E:\work\STM32\keil5\ARM\ARMCC\Bin\..\include\stddef.h
-.\objects\timers.o: E:\work\STM32\keil5\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\timers.o: E:\xieyiyi\gz\stm32\keil\ARM\ARMCC\Bin\..\include\stddef.h
+.\objects\timers.o: E:\xieyiyi\gz\stm32\keil\ARM\ARMCC\Bin\..\include\stdint.h
 .\objects\timers.o: .\user\FreeRTOSConfig.h
 .\objects\timers.o: .\start\stm32f10x.h
 .\objects\timers.o: .\start\core_cm3.h

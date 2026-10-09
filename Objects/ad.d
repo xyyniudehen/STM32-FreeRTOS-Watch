@@ -1,7 +1,7 @@
 .\objects\ad.o: hardware\AD.c
 .\objects\ad.o: .\start\stm32f10x.h
 .\objects\ad.o: .\start\core_cm3.h
-.\objects\ad.o: E:\work\STM32\keil5\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\ad.o: E:\xieyiyi\gz\stm32\keil\ARM\ARMCC\Bin\..\include\stdint.h
 .\objects\ad.o: .\start\system_stm32f10x.h
 .\objects\ad.o: .\user\stm32f10x_conf.h
 .\objects\ad.o: .\Library\stm32f10x_adc.h
