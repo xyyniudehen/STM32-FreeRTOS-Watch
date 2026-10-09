@@ -1,7 +1,7 @@
 version: "4.1"
 name: project
 type: ARM
-deviceName: STM32F103CB
+deviceName: STM32F103C8
 packDir: .pack/Keil/STM32F1xx_DFP.2.3.0
 srcDirs: []
 virtualFolder:
@@ -224,7 +224,7 @@ targets:
               isChecked: true
               isStartup: true
               mem:
-                size: "0x4000"
+                size: "0x8000"
                 startAddr: "0x8000000"
               tag: IROM
             - id: 2

@@ -20,6 +20,6 @@ uint8_t BootFlash_EraseApp(uint32_t firmware_size);
  */
 uint8_t BootFlash_Write(uint32_t address, const uint8_t *data, uint32_t length);
 
-
+void BootUpdate_PrintReceiveError(void);
 
 #endif

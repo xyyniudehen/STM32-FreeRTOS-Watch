@@ -27,11 +27,105 @@ Project File Date:  10/08/2026
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 6 (build 750)', folder: 'E:\xieyiyi\gz\stm32\keil\ARM\ARMCC\Bin'
 Build target 'Target 1'
-compiling system_stm32f10x.c...
-linking...
-Program Size: Code=35810 RO-data=10382 RW-data=392 ZI-data=15416  
-After Build - User command #1: fromelf --bin --output .\Objects\APP.bin .\Objects\project.axf
-".\Objects\project.axf" - 0 Error(s), 0 Warning(s).
+compiling SetTime.c...
+hardware\MyRTC.h(9): warning:  #1-D: last line of file ends without a newline
+  #endif // !__MYRTC_H
+hardware\SetTime.c(9): error:  #20: identifier "Return" is undefined
+      OLED_ShowImage(0, 0, 16, 16, Return);
+hardware\SetTime.c(279): warning:  #1-D: last line of file ends without a newline
+  }
+hardware\SetTime.c: 2 warnings, 1 error
+compiling OLED_Data.c...
+compiling Alarm.c...
+hardware\MyRTC.h(9): warning:  #1-D: last line of file ends without a newline
+  #endif // !__MYRTC_H
+hardware\Alarm.c(24): error:  #20: identifier "Return" is undefined
+      OLED_ShowImage(0, 0, 16, 16, Return);
+hardware\Alarm.c: 1 warning, 1 error
+compiling dino.c...
+hardware\dino.c(59): error:  #20: identifier "Ground" is undefined
+          OLED_DisplayBuf[7][i] = Ground[(i + Ground_pos) % 256];
+hardware\dino.c(75): error:  #20: identifier "Barrier" is undefined
+      OLED_ShowImage(127-Barrier_pos, 44, 16, 18, Barrier[barrier_flag]);
+hardware\dino.c(87): error:  #20: identifier "Cloud" is undefined
+      OLED_ShowImage(128-Cloude_pos ,9, 16, 8, Cloud );
+hardware\dino.c(109): error:  #20: identifier "Dino" is undefined
+          if(Cloude_pos%2==0)OLED_ShowImage(0, 44, 16, 18, Dino[0]);
+hardware\dino.c(110): error:  #20: identifier "Dino" is undefined
+          else OLED_ShowImage(0, 44, 16, 18, Dino[1]);
+hardware\dino.c(114): error:  #20: identifier "Dino" is undefined
+          OLED_ShowImage(0, 44-Jump_Pos, 16, 18, Dino[2]);
+hardware\dino.c(203): warning:  #1-D: last line of file ends without a newline
+  }
+hardware\dino.c: 1 warning, 6 errors
+compiling menu.c...
+hardware\MyRTC.h(9): warning:  #1-D: last line of file ends without a newline
+  #endif // !__MYRTC_H
+hardware\SetTime.h(11): warning:  #1-D: last line of file ends without a newline
+  #endif
+hardware\menu.h(20): warning:  #1-D: last line of file ends without a newline
+  #endif
+hardware\MPU6050.h(13): warning:  #1-D: last line of file ends without a newline
+  #endif // !__MPU6050_H
+hardware\menu.c(43): warning:  #167-D: argument of type "const char *" is incompatible with parameter of type "char *"
+      Serial_Send_String(name);
+hardware\menu.c(124): error:  #20: identifier "Battery1" is undefined
+      if (Battery_Capacity==100)OLED_ShowImage(110, 0, 16, 16,Battery1);
+hardware\menu.c(127): error:  #20: identifier "Battery1" is undefined
+          OLED_ShowImage(110, 0, 16, 16,Battery1);
+hardware\menu.c(133): error:  #20: identifier "Battery1" is undefined
+          OLED_ShowImage(110, 0, 16, 16,Battery1);
+hardware\menu.c(213): error:  #20: identifier "Return" is undefined
+      OLED_ShowImage(0, 0, 16,16 ,Return);
+hardware\menu.c(280): error:  #20: identifier "Frame" is undefined
+      OLED_ShowImage(42, 10, 44, 44, Frame);
+hardware\menu.c(306): error:  #20: identifier "Menu_Graph" is undefined
+      OLED_ShowImage(x_pre-48, 16,32 , 32, Menu_Graph[pre_selection-1]);
+hardware\menu.c(310): error:  #20: identifier "Menu_Graph" is undefined
+      OLED_ShowImage(x_pre-96, 16,32 , 32, Menu_Graph[pre_selection-2]);
+hardware\menu.c(313): error:  #20: identifier "Menu_Graph" is undefined
+      OLED_ShowImage(x_pre, 16,32 , 32, Menu_Graph[pre_selection]);
+hardware\menu.c(339): error:  #20: identifier "Menu_Graph" is undefined
+      OLED_ShowImage(x_pre-48, 16+8*i,32 , 32, Menu_Graph[pre_selection-1]);
+hardware\menu.c(341): error:  #20: identifier "Menu_Graph" is undefined
+      OLED_ShowImage(x_pre,16+8*i    ,32 , 32, Menu_Graph[pre_selection]);
+hardware\menu.c(416): error:  #20: identifier "Return" is undefined
+      OLED_ShowImage(0, 0, 16, 16, Return);
+hardware\menu.c(496): error:  #20: identifier "Return" is undefined
+      OLED_ShowImage(0, 0, 16, 16, Return);
+hardware\menu.c(615): error:  #20: identifier "Return" is undefined
+      OLED_ShowImage(0, 0, 16, 16, Return);
+hardware\menu.c(734): error:  #20: identifier "Return" is undefined
+      OLED_ShowImage(0,0,16,16,Return);
+hardware\menu.c(870): error:  #20: identifier "Return" is undefined
+      OLED_ShowImage(0,0,16,16,Return);
+hardware\menu.c(943): error:  #20: identifier "Eyebrow" is undefined
+      OLED_ShowImage(30, 10+i, 16, 16, Eyebrow[0]);
+hardware\menu.c(947): error:  #20: identifier "Mouth" is undefined
+      OLED_ShowImage(54, 40, 20, 20, Mouth);
+hardware\menu.c(954): error:  #20: identifier "Eyebrow" is undefined
+      OLED_ShowImage(30, 12-i, 16, 16, Eyebrow[0]);
+hardware\menu.c(958): error:  #20: identifier "Mouth" is undefined
+      OLED_ShowImage(54, 40, 20, 20, Mouth);
+hardware\menu.c(1021): warning:  #1-D: last line of file ends without a newline
+  //*-----------------------------µÍ¹¦ºÄ-------------------------------*/
+hardware\menu.c(31): warning:  #177-D: function "MPU_PrintState"  was declared but never referenced
+  static void MPU_PrintState(const char *name, uint8_t result)
+hardware\menu.c: 7 warnings, 19 errors
+compiling Power.c...
+.\System\Timer.h(13): warning:  #1-D: last line of file ends without a newline
+  #endif
+hardware\MPU6050.h(13): warning:  #1-D: last line of file ends without a newline
+  #endif // !__MPU6050_H
+hardware\Power.c: 2 warnings, 0 errors
+compiling main.c...
+.\hardware\menu.h(20): warning:  #1-D: last line of file ends without a newline
+  #endif
+user\main.c(449): warning:  #1-D: last line of file ends without a newline
+  }
+user\main.c: 2 warnings, 0 errors
+compiling OLED.c...
+".\Objects\project.axf" - 27 Error(s), 15 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -44,7 +138,8 @@ Package Vendor: Keil
   E:/xieyiyi/gz/stm32/keil/packet/Keil/STM32F1xx_DFP/2.4.1/Device/Include
 
 <h2>Collection of Component Files used:</h2>
-Build Time Elapsed:  00:00:02
+Target not created.
+Build Time Elapsed:  00:00:01
 </pre>
 </body>
 </html>

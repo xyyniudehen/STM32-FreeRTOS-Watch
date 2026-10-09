@@ -1,6 +1,6 @@
 #include "stm32f10x.h"                  // Device header
 #include "boot.h"
-
+#include "Serial.h"
 /*
  * pFunction 是函数指针类型：指向“无参数、无返回值”的函数。
  * APP 向量表第 2 个 32 位数据保存 Reset_Handler 地址，读出后需要
@@ -58,6 +58,8 @@ void Boot_JumpToApp(void)
      * PRIMASK 不会因为普通函数跳转自动恢复，APP 侧需要确保重新使能中断。
      */
     __disable_irq();
+
+    Serial_DMADeInit();
 
     /*
      * 关闭并清空 Bootloader 使用过的 SysTick，防止 APP 刚启动就收到旧节拍。

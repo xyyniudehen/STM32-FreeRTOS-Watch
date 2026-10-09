@@ -3,6 +3,7 @@
 #include "Serial.h"
 #include "Delay.h"
 #include "BootFlash.h"
+#include "OLED.h"
 
 /*
  * static 放在文件作用域时，表示该符号只在 BootUpdate.c 内可见，
@@ -146,6 +147,79 @@ static uint8_t BootUpdate_ReceiveBuffer(uint8_t *buffer, uint32_t length)
     return 1;
 }
 
+
+/*-------打印程序包接收过程中出现的错误类型----------*/
+static void BootUpdate_PrintReceiveError(void)
+{
+    switch (Serial_DMAGetLastError())
+    {
+        case SERIAL_RX_ERROR_PARAMETER:
+            Serial_Send_String("DMA PARAMETER ERROR\r\n");
+            break;
+
+        case SERIAL_RX_ERROR_BUSY:
+            Serial_Send_String("DMA BUSY ERROR\r\n");
+            break;
+
+        case SERIAL_RX_ERROR_NOT_STARTED:
+            Serial_Send_String("DMA NOT STARTED ERROR\r\n");
+            break;
+
+        case SERIAL_RX_ERROR_TIMEOUT:
+            Serial_Send_String("DMA DATA TIMEOUT\r\n");
+            break;
+
+        case SERIAL_RX_ERROR_DMA:
+            Serial_Send_String("DMA TRANSFER ERROR\r\n");
+            break;
+
+        case SERIAL_RX_ERROR_UART:
+            Serial_Send_String("UART RECEIVE ERROR\r\n");
+            break;
+
+        default:
+            Serial_Send_String("DMA RECEIVE ERROR\r\n");
+            break;
+    }
+}
+
+
+static void BootUpdate_ShowProgress(uint32_t received_size, uint32_t firmware_size)
+{
+    uint32_t percent;
+    uint8_t width;
+
+    if (firmware_size == 0U)
+    {
+        return;
+    }
+
+    percent = received_size * 100U / firmware_size;
+
+    if (percent > 100U)
+    {
+        percent = 100U;
+    }
+
+    width = (uint8_t)(percent * 96U / 100U);
+
+    OLED_Clear();
+
+    OLED_ShowString(16, 0, "Updating", OLED_8X16);
+
+    OLED_DrawRectangle(12, 24, 104, 14, OLED_UNFILLED);
+
+    if (width > 0U)
+    {
+        OLED_DrawRectangle(16, 27, width, 8, OLED_FILLED);
+    }
+
+    OLED_ShowNum(48, 48, percent, 3, OLED_8X16);
+    OLED_ShowChar(72, 48, '%', OLED_8X16);
+
+    OLED_Update();
+}
+
 /*
  * 按 256 字节分包接收并写入 APP Flash。
  * “PACKET READY -> 电脑发一包 -> 写 Flash -> PACKET OK”构成软件流量控制，
@@ -178,11 +252,9 @@ static uint8_t BootUpdate_ReceiveFirmware(uint32_t firmware_size)
          * 先准备DMA，再通知电脑发包。
          * DMA将本包数据直接搬到现有RAM缓冲区。
          */
-        if (Serial_DMAReceiveStart(
-                BootUpdate_Packet,
-                (uint16_t)packet_size) == 0U)
+        if (Serial_DMAReceiveStart(BootUpdate_Packet,(uint16_t)packet_size) == 0U)
         {
-            Serial_Send_String("DMA START ERROR\r\n");
+            BootUpdate_PrintReceiveError();
             return 0;
         }
 
@@ -194,7 +266,7 @@ static uint8_t BootUpdate_ReceiveFirmware(uint32_t firmware_size)
          */
         if (Serial_DMAReceiveWait(1000000U) == 0U)
         {
-            Serial_Send_String("DMA DATA TIMEOUT OR ERROR\r\n");
+            BootUpdate_PrintReceiveError();
             return 0;
         }
 
@@ -213,6 +285,9 @@ static uint8_t BootUpdate_ReceiveFirmware(uint32_t firmware_size)
         /* 只有本包写成功后，累计长度和下一包 Flash 地址才向前推进。 */
         received_size += packet_size;
         write_address += packet_size;
+
+        /*OLED显示下载进度*/
+        BootUpdate_ShowProgress(received_size, firmware_size);
 
         Serial_Send_String("PACKET OK\r\n");
     }
@@ -258,6 +333,10 @@ uint8_t BootUpdate_Start(void)
     }
     Serial_Send_String("HEADER OK\r\n");
 
+    OLED_Clear();
+    OLED_ShowString(16, 16, "Preparing...", OLED_8X16);
+    OLED_Update();
+
     if(BootFlash_EraseApp(firmware_size)==0U)
     {
         Serial_Send_String("FLASH ERASE ERROR\r\n");
@@ -265,6 +344,10 @@ uint8_t BootUpdate_Start(void)
     }
 
     Serial_Send_String("ERASE OK\r\n");
+
+    OLED_Clear();
+    OLED_ShowString(16, 16, "Updating...", OLED_8X16);
+    OLED_Update();
 
     if (BootUpdate_ReceiveFirmware(firmware_size)==0U)
     {
@@ -286,6 +369,11 @@ uint8_t BootUpdate_Start(void)
     Serial_Send_String("CRC OK\r\n");
 
     Serial_Send_String("FIRMWARE RECEIVE OK\r\n");
+
+    OLED_Clear();
+    OLED_ShowString(16, 16, "Update OK", OLED_8X16);
+    OLED_ShowString(8, 40, "Reset to start", OLED_8X16);
+    OLED_Update();
 
     return 1;
 }

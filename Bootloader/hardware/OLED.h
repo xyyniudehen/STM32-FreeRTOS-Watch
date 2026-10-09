@@ -26,6 +26,8 @@ void OLED_Init(void);
 
 /*???????*/
 void OLED_Update(void);
+extern volatile uint32_t OLED_FrameCount;
+
 void OLED_UpdateArea(int16_t X, int16_t Y, uint8_t Width, uint8_t Height);
 
 /*?????????*/

@@ -34,17 +34,17 @@ extern const ChineseCell_t OLED_CF16x16[];
 
 extern const uint8_t OLED_F12x24[][36];
 /*???????????*/
-extern const uint8_t Diode[];
-extern const uint8_t Return[];
-extern const uint8_t Menu_Graph[][128];
-extern const uint8_t Frame[];
-extern const uint8_t Ground[];
-extern const uint8_t Barrier[][48];
-extern const uint8_t Cloud[];
-extern const uint8_t Dino[][48];
-extern const uint8_t Eyebrow[][32];
-extern const uint8_t Mouth[];
-extern const uint8_t Battery1[];
+//extern const uint8_t Diode[];
+//extern const uint8_t Return[];
+//extern const uint8_t Menu_Graph[][128];
+//extern const uint8_t Frame[];
+//extern const uint8_t Ground[];
+//extern const uint8_t Barrier[][48];
+//extern const uint8_t Cloud[];
+//extern const uint8_t Dino[][48];
+//extern const uint8_t Eyebrow[][32];
+//extern const uint8_t Mouth[];
+//extern const uint8_t Battery1[];
 /*????????????????????????????????????????*/
 //...
 

@@ -30,7 +30,7 @@ static void Boot_DMAReceiveTest(void)
     /* 等待完整10字节；返回0可能是超时或错误，因此使用合并错误提示。 */
     if (Serial_DMAReceiveWait(500000U) == 0U)
     {
-        Serial_Send_String("DMA TIMEOUT OR ERROR\r\n");
+        Serial_Send_String("DMA DATA TIMEOUT OR ERROR\r\n");
         return;
     }
 
@@ -88,6 +88,26 @@ static void Boot_PrintResetCause(void)
     RCC_ClearFlag();
 }
 
+static void Boot_OLEDTest(void)
+{
+    OLED_Init();
+    OLED_Clear();
+
+    OLED_ShowString(16, 0, "BOOT OLED", OLED_8X16);
+    OLED_ShowString(16, 16, "SPI TEST OK", OLED_8X16);
+
+    /* 外框：100像素宽，12像素高 */
+    OLED_DrawRectangle(14, 40, 100, 12, OLED_UNFILLED);
+
+    /* 内部填充一半，模拟50%进度 */
+    OLED_DrawRectangle(16, 42, 48, 8, OLED_FILLED);
+
+    OLED_ShowString(52, 56, "50%", OLED_6X8);
+
+    /* 绘图只修改RAM显存，此处才发送到屏幕 */
+    OLED_Update();
+}
+
 int main(void)
 {
     uint8_t byte;
@@ -95,12 +115,19 @@ int main(void)
     /* Bootloader 首先初始化串口，后续握手和错误信息都依赖 USART1。 */
     Serial_Init();
 
-    // /* 临时测试入口；下面无限循环使原有Boot升级和APP跳转暂不执行。 */
-    // Boot_DMAReceiveTest();
+    OLED_Init();
+    OLED_Clear();
+    OLED_ShowString(16, 16, "Bootloader", OLED_8X16);
+    OLED_ShowString(16, 40, "Waiting...", OLED_8X16);
+    OLED_Update();
 
-    // while (1)
-    // {
-    // }
+
+    /* 临时测试入口；下面无限循环使原有Boot升级和APP跳转暂不执行。 */
+//    Boot_DMAReceiveTest();
+
+//   while (1)
+//   {
+//   }
 
     /* 仅排查复位来源时取消下一行注释；正式功能可保持关闭。 */
     // Boot_PrintResetCause();
@@ -167,18 +194,3 @@ for (wait_ms = 0; wait_ms < 5000; wait_ms++)
 }
 
 
-// void TIM2_IRQHandler(void)
-// {
-
-// 	if (TIM_GetITStatus(TIM2, TIM_IT_Update)==SET)
-// 	{
-// 		Key3_Tick();
-// 		Key_Tick();
-// 		StopWatch_Tick();
-// 		Dino_Tick();
-// 		TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
-// 	}	
-	
-	
-
-// }

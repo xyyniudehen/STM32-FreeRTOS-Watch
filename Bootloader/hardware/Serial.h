@@ -18,6 +18,25 @@ uint8_t Serial_DMAReceiveStart(uint8_t *buffer, uint16_t length);
 /* 成功返回1，超时或接收错误返回0 */
 uint8_t Serial_DMAReceiveWait(uint32_t timeout_count);
 
+#include <stdint.h>
+
+/* 接收接口仍返回1/0，具体失败原因通过此类型查询 */
+typedef enum
+{
+    SERIAL_RX_ERROR_NONE = 0,
+    SERIAL_RX_ERROR_PARAMETER,
+    SERIAL_RX_ERROR_BUSY,
+    SERIAL_RX_ERROR_NOT_STARTED,
+    SERIAL_RX_ERROR_TIMEOUT,
+    SERIAL_RX_ERROR_DMA,
+    SERIAL_RX_ERROR_UART
+} Serial_RxError_t;
+
+Serial_RxError_t Serial_DMAGetLastError(void);
+
+/* 跳转APP前关闭Boot使用过的DMA接收资源 */
+void Serial_DMADeInit(void);
+
 
 #endif // !__SERIAL_H
 
