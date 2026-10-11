@@ -111,8 +111,48 @@ static void Boot_OLEDTest(void)
 int main(void)
 {
     uint8_t byte;
+    uint8_t update_requested;
+    uint8_t force_update;
 
-    /* Bootloader 首先初始化串口，后续握手和错误信息都依赖 USART1。 */
+    /*
+     * 优先读取请求。
+     * 这里只开放BKP访问，不初始化RTC、不清备份域。
+     */
+    // Serial_Init();
+    // Boot_PrintResetCause();
+    // Serial_Send_String("BOOT ENTRY\r\n");
+
+    // update_requested = Boot_IsUpdateRequested();
+
+    force_update = Boot_IsForceUpdateKeyPressed();
+
+    update_requested = Boot_IsUpdateRequested();
+
+
+    if (force_update != 0U)
+    {
+        update_requested = 1U;
+    }
+    else if (update_requested != 0U)
+    {
+        Boot_ClearUpdateRequest();
+    }
+    else if (Boot_CheckAppValid() != 0U)
+    {
+        /*
+         * 正常启动直接进入APP。
+         * Serial_Init打开DMA时钟，供跳转清理接口使用。
+         */
+        Serial_Init();
+        Boot_JumpToApp();
+
+        /* 正常跳转不应返回 */
+        while (1)
+        {
+        }
+    }
+
+
     Serial_Init();
 
     OLED_Init();
@@ -121,75 +161,48 @@ int main(void)
     OLED_ShowString(16, 40, "Waiting...", OLED_8X16);
     OLED_Update();
 
-
-    /* 临时测试入口；下面无限循环使原有Boot升级和APP跳转暂不执行。 */
-//    Boot_DMAReceiveTest();
-
-//   while (1)
-//   {
-//   }
-
-    /* 仅排查复位来源时取消下一行注释；正式功能可保持关闭。 */
-    // Boot_PrintResetCause();
-
     Serial_Send_String("Bootloader Start\r\n");
 
-    uint32_t wait_ms;
-
-Serial_Send_String("Send U within 5 seconds\r\n");
-
-/*
- * 轮询约 5000 次，每轮末尾延时 1 ms，因此升级入口窗口约为 5 秒。
- * 收到 ASCII 字符 U（数值 0x55）才进入升级；否则超时后尝试启动 APP。
- */
-for (wait_ms = 0; wait_ms < 5000; wait_ms++)
-{
-    if (Serial_ReceiveByte(&byte) == 1)
+    if (force_update != 0U)
     {
-        Serial_Send_String("Receive: ");
-        Serial_SendByte(byte);
-        Serial_Send_String("\r\n");
-
-        /* Python 脚本发送 b"U"，Serial_ReceiveByte 通过 &byte 写回后在此判断。 */
-		if (byte == 'U')
-		{
-			Serial_Send_String("Update Mode\r\n");
-
-            /* if 中会先调用升级函数，再把它的返回值与 1 比较。 */
-			if (BootUpdate_Start() == 1)
-			{
-				Serial_Send_String("UPDATE SUCCESS\r\n");
-			}
-			else
-			{
-				Serial_Send_String("HEADER TEST FAIL\r\n");
-			}
-
-            /* 升级流程结束后停在 Bootloader；当前设计需要复位后再启动 APP。 */
-			while (1)
-			{
-			}
-		}
-
-	}
-    Delay_ms(1);
-}
-
-    Serial_Send_String("Jump App\r\n");
-
-    /*
-     * 未收到升级命令时检查 APP 初始栈地址。有效则切换 VTOR、MSP 和入口；
-     * Boot_JumpToApp() 正常情况下不会返回。
-     */
-    if (Boot_CheckAppValid())
+        Serial_Send_String("Force update key\r\n");
+    }
+    else if (update_requested != 0U)
     {
-        Boot_JumpToApp();
+        Serial_Send_String("Update requested\r\n");
+    }
+    else
+    {
+        Serial_Send_String("No Valid App\r\n");
     }
 
-    Serial_Send_String("No Valid App\r\n");
+    Serial_Send_String("Waiting for U\r\n");
 
+    /* 升级模式中持续等待上位机，不再限5秒 */
     while (1)
     {
+        if (Serial_ReceiveByte(&byte) == 1U)
+        {
+            if (byte == 'U')
+            {
+                Serial_Send_String("Update Mode\r\n");
+
+                if (BootUpdate_Start() == 1U)
+                {
+                    Serial_Send_String("UPDATE SUCCESS\r\n");
+
+                    /* 保留当前设计：成功后由用户复位启动APP */
+                    while (1)
+                    {
+                    }
+                }
+
+                Serial_Send_String("UPDATE FAIL\r\n");
+                Serial_Send_String("Waiting for U\r\n");
+            }
+        }
+
+        Delay_ms(1);
     }
 }
 

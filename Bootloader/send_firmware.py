@@ -65,23 +65,25 @@ def main():
     print("Header:", header.hex(" ").upper())
 
     # 打开电脑端串口。timeout 只控制单次 read 等待时间，整体升级另有 120 秒超时。
+# 先设置控制线状态，再打开串口
     ser = serial.Serial(
-        port=PORT,
-        baudrate=BAUDRATE,
-        bytesize=serial.EIGHTBITS,
-        parity=serial.PARITY_NONE,
-        stopbits=serial.STOPBITS_ONE,
-        timeout=0.1,
-        rtscts=False,
-        dsrdtr=False
-    )
+    port=None,
+    baudrate=BAUDRATE,
+    bytesize=serial.EIGHTBITS,
+    parity=serial.PARITY_NONE,
+    stopbits=serial.STOPBITS_ONE,
+    timeout=0.1,
+    rtscts=False,
+    dsrdtr=False
+)
 
-    # 明确关闭 DTR/RTS 控制线；本协议只使用 TX、RX、GND，不使用硬件流控。
     ser.dtr = False
     ser.rts = False
+    ser.port = PORT
+    ser.open()
 
     print("Serial opened.")
-    print("Press reset button now.")
+    print("Select Firmware update in APP; do not press reset.")
 
     start_time = time.time()
     last_u_time = 0

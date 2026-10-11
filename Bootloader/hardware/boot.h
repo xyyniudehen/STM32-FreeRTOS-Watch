@@ -15,8 +15,14 @@ uint8_t Boot_CheckAppValid(void);
 void Boot_JumpToApp(void);
 
 
+/* DR1用于RTC初始化标记；DR2用于升级请求 */
+#define BOOT_REQUEST_REGISTER  BKP_DR2
+#define BOOT_REQUEST_MAGIC     0xB007U
 
+uint8_t Boot_IsUpdateRequested(void);
+void Boot_ClearUpdateRequest(void);
 
-
+/* 检查启动时是否按住KEY3，按住返回1 */
+uint8_t Boot_IsForceUpdateKeyPressed(void);
 
 #endif

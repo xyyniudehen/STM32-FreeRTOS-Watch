@@ -6,4 +6,7 @@ void MyRTC_Init(void);
 void MyRTC_SetTime(void);
 void MyRTC_ReadTime(void);
 
+void MyRTC_RequestBootUpdate(void);
+
+
 #endif // !__MYRTC_H

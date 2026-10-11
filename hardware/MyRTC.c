@@ -72,5 +72,22 @@ void MyRTC_ReadTime(void)
     MyRTC_Time[4] = time_date.tm_min;
     MyRTC_Time[5] = time_date.tm_sec;
 
+    
+}
 
+/* 与Boot的boot.h约定一致：DR2，0xB007 */
+void MyRTC_RequestBootUpdate(void)
+{
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR | RCC_APB1Periph_BKP, ENABLE);
+
+    PWR_BackupAccessCmd(ENABLE);
+
+    BKP_WriteBackupRegister(BKP_DR2, 0xB007U);
+
+    /* 读回确认成功，才复位 */
+    if (BKP_ReadBackupRegister(BKP_DR2) == 0xB007U)
+    {
+        __DSB();
+        NVIC_SystemReset();
+    }
 }

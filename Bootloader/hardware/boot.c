@@ -1,6 +1,9 @@
 #include "stm32f10x.h"                  // Device header
 #include "boot.h"
 #include "Serial.h"
+#include "BootFlash.h"
+#include "Serial.h"
+
 /*
  * pFunction 是函数指针类型：指向“无参数、无返回值”的函数。
  * APP 向量表第 2 个 32 位数据保存 Reset_Handler 地址，读出后需要
@@ -9,32 +12,104 @@
  */
 typedef void (*pFunction)(void);
 
-/*
- * 检查 APP 向量表中的初始栈顶地址是否落在 SRAM 地址段。
+uint8_t Boot_IsForceUpdateKeyPressed(void)
+{
+    GPIO_InitTypeDef gpio;
+
+    /*
+     * PA15默认复用为JTAG功能。
+     * 关闭JTAG，保留SWD，既释放PA15又不影响调试下载。
+     */
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_AFIO,ENABLE);
+
+    GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable,ENABLE);
+
+    gpio.GPIO_Pin = GPIO_Pin_15;
+    gpio.GPIO_Mode = GPIO_Mode_IPU;
+    gpio.GPIO_Speed = GPIO_Speed_2MHz;
+    GPIO_Init(GPIOA, &gpio);
+
+    /*
+     * KEY3采用上拉输入：
+     * 未按下 = 1
+     * 按下   = 0
+     */
+    if (GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_15) == Bit_RESET)
+    {
+        return 1U;
+    }
+
+    return 0U;
+}
+
+static void Boot_EnableBackupAccess(void)
+{
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR | RCC_APB1Periph_BKP, ENABLE);
+    PWR_BackupAccessCmd(ENABLE);
+}
+
+uint8_t Boot_IsUpdateRequested(void)
+{
+    Boot_EnableBackupAccess();
+
+    return (BKP_ReadBackupRegister(BOOT_REQUEST_REGISTER)== BOOT_REQUEST_MAGIC) ? 1U : 0U;
+}
+
+void Boot_ClearUpdateRequest(void)
+{
+    Boot_EnableBackupAccess();
+
+    BKP_WriteBackupRegister(BOOT_REQUEST_REGISTER, 0U);
+}
+
+
+
+/*------------------------------------------------------------*/
+ /* 检查 APP 向量表中的初始栈顶地址是否落在 SRAM 地址段。
  * 返回 1 表示具备基本可启动条件，返回 0 表示 APP 不存在或向量表异常。
  * 这里的 1/0 只是函数返回给调用者的判断结果，不会直接让 CPU 跳转。
- */
+ /*------------------------------------------------------------*/
 uint8_t Boot_CheckAppValid(void)
 {
     uint32_t app_stack;
+    uint32_t app_reset;
+    uint32_t reset_address;
 
-    /*
-     * Flash 是存储器映射的：APP_ADDR 可像普通地址一样被 CPU 直接读取。
-     * 向量表第 1 个字（APP_ADDR + 0）是 APP 启动时应装入 MSP 的栈顶地址。
-     * __IO 带有 volatile 语义，要求编译器每次都真正访问该地址。
-     */
     app_stack = *(__IO uint32_t *)APP_ADDR;
+    app_reset = *(__IO uint32_t *)(APP_ADDR + 4U);
 
     /*
-     * STM32F103 的 SRAM 从 0x20000000 开始。掩码保留高位，用于排除
-     * 0xFFFFFFFF（Flash 擦除态）、0x00000000 等明显无效的栈地址。
+     * STM32F103C8：SRAM为20KiB。
+     * 栈向低地址增长，初始栈顶允许等于SRAM末尾后一地址。
      */
-    if ((app_stack & 0x2FFE0000) == 0x20000000)
+    if ((app_stack <= 0x20000000U) ||
+        (app_stack > 0x20005000U))
     {
-        return 1;
+        return 0U;
     }
-    return 0;
 
+    /* 初始栈顶要求8字节对齐 */
+    if ((app_stack & 0x7U) != 0U)
+    {
+        return 0U;
+    }
+
+    /* Cortex-M复位入口必须带Thumb状态位 */
+    if ((app_reset & 0x1U) == 0U)
+    {
+        return 0U;
+    }
+
+    /* 去掉Thumb位后，检查实际代码地址 */
+    reset_address = app_reset & ~0x1U;
+
+    if ((reset_address < APP_FLASH_START) ||
+        (reset_address >= APP_FLASH_END))
+    {
+        return 0U;
+    }
+
+    return 1U;
 }
 
 

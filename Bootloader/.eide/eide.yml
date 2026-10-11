@@ -81,6 +81,8 @@ virtualFolder:
         - path: hardware/LED.h
         - path: hardware/KEY.h
         - path: hardware/OLED.h
+        - path: hardware/OLED.c
+        - path: hardware/OLED_Data.c
         - path: hardware/OLED_Font.h
         - path: hardware/MyRTC.h
         - path: hardware/OLED_Data.h
@@ -146,7 +148,7 @@ targets:
             c99-mode: true
             gnu-extensions: true
             one-elf-section-per-function: true
-            optimization: level-0
+            optimization: level-1
             warnings: all-warnings
           global:
             output-debug-info: enable
@@ -224,7 +226,7 @@ targets:
               isChecked: true
               isStartup: true
               mem:
-                size: "0x8000"
+                size: "0x4000"
                 startAddr: "0x8000000"
               tag: IROM
             - id: 2
